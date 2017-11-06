@@ -44,6 +44,8 @@ block // TODO: dalsi cykly
     | if_cond block
     | while_cond block
     | ;
+    // povolit prazdny strednik
+    // pridat begin end do blck
 
 function_call
     : Identifier BracketLeft function_call_params BracketRight Semi;
@@ -128,7 +130,6 @@ Int : [-+]?[0-9]+; // ([0-9]+)
 Double: [0-9]+('.'[0-9]+);
 DoubleType : 'double';
 BoolType : 'bool';
-Identifier: [a-zA-Z]+[a-zA-Z0-9]*;
 BeginFunction : 'fnc';
 If : 'if';
 While : 'while';
@@ -138,4 +139,6 @@ Assign : '=';
 Semi : ';';
 RelationOp : '<' | '>' | '<=' | '>=' '==';
 LogicalOp : '&&' | '||';
+Identifier: [a-zA-Z]+[a-zA-Z0-9]*;
 WS :  [ \t\r\n]+ -> skip;
+

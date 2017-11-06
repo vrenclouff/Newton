@@ -16,15 +16,9 @@ public class Main {
             lexer = new NewtonLexer(CharStreams.fromFileName(INPUT));
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             NewtonParser parser = new NewtonParser(tokens);
-            ParseTree tree = parser.program_begin();
 
             ParserRuleContext ruleContext = parser.program_begin();
             Trees.inspect(ruleContext, parser);
-
-
-
-
-
 
         } catch (IOException e) {
             e.printStackTrace();

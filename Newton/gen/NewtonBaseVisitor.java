@@ -1,4 +1,4 @@
-// Generated from C:/Users/Barat/OneDrive/Dokumenty/_FAV/ING/FJP/Semestralka/projekt/src\Newton.g4 by ANTLR 4.7
+// Generated from C:/Users/Barat/Documents/fjp/Newton/src\Newton.g4 by ANTLR 4.7
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**

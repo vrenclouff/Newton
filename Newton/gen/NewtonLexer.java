@@ -1,4 +1,4 @@
-// Generated from C:/Users/Barat/OneDrive/Dokumenty/_FAV/ING/FJP/Semestralka/projekt/src\Newton.g4 by ANTLR 4.7
+// Generated from C:/Users/Barat/Documents/fjp/Newton/src\Newton.g4 by ANTLR 4.7
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -18,8 +18,8 @@ public class NewtonLexer extends Lexer {
 	public static final int
 		T__0=1, BeginProgram=2, BeginBlock=3, EndBlock=4, MainFnc=5, Add=6, Sub=7, 
 		Mul=8, Div=9, Const=10, IntType=11, Boolean=12, VoidType=13, Int=14, Double=15, 
-		DoubleType=16, BoolType=17, Identifier=18, BeginFunction=19, If=20, While=21, 
-		BracketLeft=22, BracketRight=23, Assign=24, Semi=25, RelationOp=26, LogicalOp=27, 
+		DoubleType=16, BoolType=17, BeginFunction=18, If=19, While=20, BracketLeft=21, 
+		BracketRight=22, Assign=23, Semi=24, RelationOp=25, LogicalOp=26, Identifier=27, 
 		WS=28;
 	public static String[] channelNames = {
 		"DEFAULT_TOKEN_CHANNEL", "HIDDEN"
@@ -32,22 +32,22 @@ public class NewtonLexer extends Lexer {
 	public static final String[] ruleNames = {
 		"T__0", "BeginProgram", "BeginBlock", "EndBlock", "MainFnc", "Add", "Sub", 
 		"Mul", "Div", "Const", "IntType", "Boolean", "VoidType", "Int", "Double", 
-		"DoubleType", "BoolType", "Identifier", "BeginFunction", "If", "While", 
-		"BracketLeft", "BracketRight", "Assign", "Semi", "RelationOp", "LogicalOp", 
+		"DoubleType", "BoolType", "BeginFunction", "If", "While", "BracketLeft", 
+		"BracketRight", "Assign", "Semi", "RelationOp", "LogicalOp", "Identifier", 
 		"WS"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
 		null, "','", "'start_program'", "'begin'", "'end'", "'main'", "'+'", "'-'", 
 		"'*'", "'/'", "'const'", "'int'", null, "'void'", null, null, "'double'", 
-		"'bool'", null, "'fnc'", "'if'", "'while'", "'('", "')'", "'='", "';'"
+		"'bool'", "'fnc'", "'if'", "'while'", "'('", "')'", "'='", "';'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, null, "BeginProgram", "BeginBlock", "EndBlock", "MainFnc", "Add", 
 		"Sub", "Mul", "Div", "Const", "IntType", "Boolean", "VoidType", "Int", 
-		"Double", "DoubleType", "BoolType", "Identifier", "BeginFunction", "If", 
-		"While", "BracketLeft", "BracketRight", "Assign", "Semi", "RelationOp", 
-		"LogicalOp", "WS"
+		"Double", "DoubleType", "BoolType", "BeginFunction", "If", "While", "BracketLeft", 
+		"BracketRight", "Assign", "Semi", "RelationOp", "LogicalOp", "Identifier", 
+		"WS"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -118,14 +118,14 @@ public class NewtonLexer extends Lexer {
 		"\r\3\r\5\rv\n\r\3\16\3\16\3\16\3\16\3\16\3\17\5\17~\n\17\3\17\6\17\u0081"+
 		"\n\17\r\17\16\17\u0082\3\20\6\20\u0086\n\20\r\20\16\20\u0087\3\20\3\20"+
 		"\6\20\u008c\n\20\r\20\16\20\u008d\3\21\3\21\3\21\3\21\3\21\3\21\3\21\3"+
-		"\22\3\22\3\22\3\22\3\22\3\23\6\23\u009d\n\23\r\23\16\23\u009e\3\23\7\23"+
-		"\u00a2\n\23\f\23\16\23\u00a5\13\23\3\24\3\24\3\24\3\24\3\25\3\25\3\25"+
-		"\3\26\3\26\3\26\3\26\3\26\3\26\3\27\3\27\3\30\3\30\3\31\3\31\3\32\3\32"+
-		"\3\33\3\33\3\33\3\33\3\33\3\33\3\33\3\33\5\33\u00c4\n\33\3\34\3\34\3\34"+
-		"\3\34\5\34\u00ca\n\34\3\35\6\35\u00cd\n\35\r\35\16\35\u00ce\3\35\3\35"+
+		"\22\3\22\3\22\3\22\3\22\3\23\3\23\3\23\3\23\3\24\3\24\3\24\3\25\3\25\3"+
+		"\25\3\25\3\25\3\25\3\26\3\26\3\27\3\27\3\30\3\30\3\31\3\31\3\32\3\32\3"+
+		"\32\3\32\3\32\3\32\3\32\3\32\5\32\u00b9\n\32\3\33\3\33\3\33\3\33\5\33"+
+		"\u00bf\n\33\3\34\6\34\u00c2\n\34\r\34\16\34\u00c3\3\34\7\34\u00c7\n\34"+
+		"\f\34\16\34\u00ca\13\34\3\35\6\35\u00cd\n\35\r\35\16\35\u00ce\3\35\3\35"+
 		"\2\2\36\3\3\5\4\7\5\t\6\13\7\r\b\17\t\21\n\23\13\25\f\27\r\31\16\33\17"+
 		"\35\20\37\21!\22#\23%\24\'\25)\26+\27-\30/\31\61\32\63\33\65\34\67\35"+
-		"9\36\3\2\b\4\2--//\3\2\62;\4\2C\\c|\5\2\62;C\\c|\4\2>>@@\5\2\13\f\17\17"+
+		"9\36\3\2\b\4\2--//\3\2\62;\4\2>>@@\4\2C\\c|\5\2\62;C\\c|\5\2\13\f\17\17"+
 		"\"\"\2\u00dc\2\3\3\2\2\2\2\5\3\2\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2"+
 		"\2\2\2\r\3\2\2\2\2\17\3\2\2\2\2\21\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2\2\2"+
 		"\27\3\2\2\2\2\31\3\2\2\2\2\33\3\2\2\2\2\35\3\2\2\2\2\37\3\2\2\2\2!\3\2"+
@@ -134,9 +134,9 @@ public class NewtonLexer extends Lexer {
 		"\2\2\2\3;\3\2\2\2\5=\3\2\2\2\7K\3\2\2\2\tQ\3\2\2\2\13U\3\2\2\2\rZ\3\2"+
 		"\2\2\17\\\3\2\2\2\21^\3\2\2\2\23`\3\2\2\2\25b\3\2\2\2\27h\3\2\2\2\31u"+
 		"\3\2\2\2\33w\3\2\2\2\35}\3\2\2\2\37\u0085\3\2\2\2!\u008f\3\2\2\2#\u0096"+
-		"\3\2\2\2%\u009c\3\2\2\2\'\u00a6\3\2\2\2)\u00aa\3\2\2\2+\u00ad\3\2\2\2"+
-		"-\u00b3\3\2\2\2/\u00b5\3\2\2\2\61\u00b7\3\2\2\2\63\u00b9\3\2\2\2\65\u00c3"+
-		"\3\2\2\2\67\u00c9\3\2\2\29\u00cc\3\2\2\2;<\7.\2\2<\4\3\2\2\2=>\7u\2\2"+
+		"\3\2\2\2%\u009b\3\2\2\2\'\u009f\3\2\2\2)\u00a2\3\2\2\2+\u00a8\3\2\2\2"+
+		"-\u00aa\3\2\2\2/\u00ac\3\2\2\2\61\u00ae\3\2\2\2\63\u00b8\3\2\2\2\65\u00be"+
+		"\3\2\2\2\67\u00c1\3\2\2\29\u00cc\3\2\2\2;<\7.\2\2<\4\3\2\2\2=>\7u\2\2"+
 		">?\7v\2\2?@\7c\2\2@A\7t\2\2AB\7v\2\2BC\7a\2\2CD\7r\2\2DE\7t\2\2EF\7q\2"+
 		"\2FG\7i\2\2GH\7t\2\2HI\7c\2\2IJ\7o\2\2J\6\3\2\2\2KL\7d\2\2LM\7g\2\2MN"+
 		"\7i\2\2NO\7k\2\2OP\7p\2\2P\b\3\2\2\2QR\7g\2\2RS\7p\2\2ST\7f\2\2T\n\3\2"+
@@ -154,24 +154,24 @@ public class NewtonLexer extends Lexer {
 		"\2\2\u008d\u008e\3\2\2\2\u008e \3\2\2\2\u008f\u0090\7f\2\2\u0090\u0091"+
 		"\7q\2\2\u0091\u0092\7w\2\2\u0092\u0093\7d\2\2\u0093\u0094\7n\2\2\u0094"+
 		"\u0095\7g\2\2\u0095\"\3\2\2\2\u0096\u0097\7d\2\2\u0097\u0098\7q\2\2\u0098"+
-		"\u0099\7q\2\2\u0099\u009a\7n\2\2\u009a$\3\2\2\2\u009b\u009d\t\4\2\2\u009c"+
-		"\u009b\3\2\2\2\u009d\u009e\3\2\2\2\u009e\u009c\3\2\2\2\u009e\u009f\3\2"+
-		"\2\2\u009f\u00a3\3\2\2\2\u00a0\u00a2\t\5\2\2\u00a1\u00a0\3\2\2\2\u00a2"+
-		"\u00a5\3\2\2\2\u00a3\u00a1\3\2\2\2\u00a3\u00a4\3\2\2\2\u00a4&\3\2\2\2"+
-		"\u00a5\u00a3\3\2\2\2\u00a6\u00a7\7h\2\2\u00a7\u00a8\7p\2\2\u00a8\u00a9"+
-		"\7e\2\2\u00a9(\3\2\2\2\u00aa\u00ab\7k\2\2\u00ab\u00ac\7h\2\2\u00ac*\3"+
-		"\2\2\2\u00ad\u00ae\7y\2\2\u00ae\u00af\7j\2\2\u00af\u00b0\7k\2\2\u00b0"+
-		"\u00b1\7n\2\2\u00b1\u00b2\7g\2\2\u00b2,\3\2\2\2\u00b3\u00b4\7*\2\2\u00b4"+
-		".\3\2\2\2\u00b5\u00b6\7+\2\2\u00b6\60\3\2\2\2\u00b7\u00b8\7?\2\2\u00b8"+
-		"\62\3\2\2\2\u00b9\u00ba\7=\2\2\u00ba\64\3\2\2\2\u00bb\u00c4\t\6\2\2\u00bc"+
-		"\u00bd\7>\2\2\u00bd\u00c4\7?\2\2\u00be\u00bf\7@\2\2\u00bf\u00c0\7?\2\2"+
-		"\u00c0\u00c1\3\2\2\2\u00c1\u00c2\7?\2\2\u00c2\u00c4\7?\2\2\u00c3\u00bb"+
-		"\3\2\2\2\u00c3\u00bc\3\2\2\2\u00c3\u00be\3\2\2\2\u00c4\66\3\2\2\2\u00c5"+
-		"\u00c6\7(\2\2\u00c6\u00ca\7(\2\2\u00c7\u00c8\7~\2\2\u00c8\u00ca\7~\2\2"+
-		"\u00c9\u00c5\3\2\2\2\u00c9\u00c7\3\2\2\2\u00ca8\3\2\2\2\u00cb\u00cd\t"+
-		"\7\2\2\u00cc\u00cb\3\2\2\2\u00cd\u00ce\3\2\2\2\u00ce\u00cc\3\2\2\2\u00ce"+
-		"\u00cf\3\2\2\2\u00cf\u00d0\3\2\2\2\u00d0\u00d1\b\35\2\2\u00d1:\3\2\2\2"+
-		"\r\2u}\u0082\u0087\u008d\u009e\u00a3\u00c3\u00c9\u00ce\3\b\2\2";
+		"\u0099\7q\2\2\u0099\u009a\7n\2\2\u009a$\3\2\2\2\u009b\u009c\7h\2\2\u009c"+
+		"\u009d\7p\2\2\u009d\u009e\7e\2\2\u009e&\3\2\2\2\u009f\u00a0\7k\2\2\u00a0"+
+		"\u00a1\7h\2\2\u00a1(\3\2\2\2\u00a2\u00a3\7y\2\2\u00a3\u00a4\7j\2\2\u00a4"+
+		"\u00a5\7k\2\2\u00a5\u00a6\7n\2\2\u00a6\u00a7\7g\2\2\u00a7*\3\2\2\2\u00a8"+
+		"\u00a9\7*\2\2\u00a9,\3\2\2\2\u00aa\u00ab\7+\2\2\u00ab.\3\2\2\2\u00ac\u00ad"+
+		"\7?\2\2\u00ad\60\3\2\2\2\u00ae\u00af\7=\2\2\u00af\62\3\2\2\2\u00b0\u00b9"+
+		"\t\4\2\2\u00b1\u00b2\7>\2\2\u00b2\u00b9\7?\2\2\u00b3\u00b4\7@\2\2\u00b4"+
+		"\u00b5\7?\2\2\u00b5\u00b6\3\2\2\2\u00b6\u00b7\7?\2\2\u00b7\u00b9\7?\2"+
+		"\2\u00b8\u00b0\3\2\2\2\u00b8\u00b1\3\2\2\2\u00b8\u00b3\3\2\2\2\u00b9\64"+
+		"\3\2\2\2\u00ba\u00bb\7(\2\2\u00bb\u00bf\7(\2\2\u00bc\u00bd\7~\2\2\u00bd"+
+		"\u00bf\7~\2\2\u00be\u00ba\3\2\2\2\u00be\u00bc\3\2\2\2\u00bf\66\3\2\2\2"+
+		"\u00c0\u00c2\t\5\2\2\u00c1\u00c0\3\2\2\2\u00c2\u00c3\3\2\2\2\u00c3\u00c1"+
+		"\3\2\2\2\u00c3\u00c4\3\2\2\2\u00c4\u00c8\3\2\2\2\u00c5\u00c7\t\6\2\2\u00c6"+
+		"\u00c5\3\2\2\2\u00c7\u00ca\3\2\2\2\u00c8\u00c6\3\2\2\2\u00c8\u00c9\3\2"+
+		"\2\2\u00c98\3\2\2\2\u00ca\u00c8\3\2\2\2\u00cb\u00cd\t\7\2\2\u00cc\u00cb"+
+		"\3\2\2\2\u00cd\u00ce\3\2\2\2\u00ce\u00cc\3\2\2\2\u00ce\u00cf\3\2\2\2\u00cf"+
+		"\u00d0\3\2\2\2\u00d0\u00d1\b\35\2\2\u00d1:\3\2\2\2\r\2u}\u0082\u0087\u008d"+
+		"\u00b8\u00be\u00c3\u00c8\u00ce\3\b\2\2";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

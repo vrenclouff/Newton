@@ -1,13 +1,16 @@
 start_program
 begin
     int a = 5;
+    const int b = 3;
+    int c = 5;
     fnc void testFnc()
     begin
         int b=3;
         b=a;
     end
+
     main()
     begin
-        testFnc();
+        testFnc();;
     end
 end
