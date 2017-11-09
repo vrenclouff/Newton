@@ -114,6 +114,106 @@ data_type
 main
     : MainFnc BracketLeft BracketRight BeginBlock function_block EndBlock;
 
+
+//New gramatic
+
+// chybi negace
+
+program
+    : programHeading functionStatement* mainStatement;
+
+programHeading
+    : constantDefinitionPart variableDefinitionPart;
+
+constantDefinitionPart
+    : 'constant:' constantDefinition+;
+
+constantDefinition
+    : Const IntType Identifier Assign Int Semi
+    | Const DoubleType Identifier Assign Double Semi;
+
+variableDefinitionPart
+    : 'variable:' variableDefinition+;
+
+variableDefinition
+    : IntType Identifier Semi
+    | DoubleType Identifier Semi
+    | BoolType Identifier Semi;
+
+mainStatement
+    : 'main' BracketLeft BracketRight statement* EndBlock;
+
+functionStatement
+    : BeginFunction VoidType Identifier BracketLeft tag? BracketRight statement* EndBlock
+    | BeginFunction baseType Identifier BracketLeft tag? BracketRight statement* 'return' tExpression ';' EndBlock;
+
+
+tag
+    : baseType Identifier (',' baseType Identifier)*;
+
+baseType
+    : IntType
+    | DoubleType
+    | BoolType;
+
+
+statement
+    : conditionalStatement
+    | loopStatement
+    | assignmentStatement
+    | callFunctionStatement;
+
+assignmentStatement
+    : Identifier Assign tExpression Semi;
+
+callFunctionStatement
+    : (Identifier Assign)? Identifier BracketLeft parameterList? BracketRight Semi;
+
+parameterList
+    : tExpression (',' tExpression)?;
+
+loopStatement
+    : whileStatement
+    | forStatement
+    | doWhileStatement;
+
+whileStatement
+    : While tExpression 'do' statement* 'endwhile';
+
+forStatement
+    : 'for' (Identifier '=')? factor ':' factor (':' Int)? 'do' statement* 'endfor';   // for a = 1:10:2 (1 az 10 po 2)
+
+doWhileStatement
+    : 'repeat' statement* 'until' tExpression;
+
+conditionalStatement
+    : ifStatement
+    | caseStatement;
+
+caseStatement
+    : 'switch' simpleExpression 'of' (Int ':' statement)+ 'default' ':' + statement 'endswitch';
+
+ifStatement
+    : If tExpression 'then' statement (Else statement*)? 'endif';
+
+tExpression
+    : simpleExpression (RelationOp simpleExpression)* (LogicalOp tExpression)*;
+
+
+simpleExpression
+    : term ((Add | Sub) term)*;
+
+term
+    : factor ((Mul | Div) factor)*
+    | BracketLeft simpleExpression BracketRight ((Add | Sub | Mul | Div) simpleExpression)?;
+
+factor
+    : Int
+    | Boolean
+    | Double
+    | Identifier;
+
+
 BeginProgram : 'start_program';
 BeginBlock : 'begin';
 EndBlock : 'end';
@@ -132,12 +232,13 @@ DoubleType : 'double';
 BoolType : 'bool';
 BeginFunction : 'fnc';
 If : 'if';
+Else: 'else';
 While : 'while';
 BracketLeft : '(';
 BracketRight : ')';
 Assign : '=';
 Semi : ';';
-RelationOp : '<' | '>' | '<=' | '>=' '==';
+RelationOp : '<' | '>' | '<=' | '>=' | '==';
 LogicalOp : '&&' | '||';
 Identifier: [a-zA-Z]+[a-zA-Z0-9]*;
 WS :  [ \t\r\n]+ -> skip;
