@@ -126,14 +126,14 @@ programHeading
     : constantDefinitionPart variableDefinitionPart;
 
 constantDefinitionPart
-    : 'constant:' constantDefinition+;
+    : 'constant:' constantDefinition*;
 
 constantDefinition
     : Const IntType Identifier Assign Int Semi
     | Const DoubleType Identifier Assign Double Semi;
 
 variableDefinitionPart
-    : 'variable:' variableDefinition+;
+    : 'variable:' variableDefinition*;
 
 variableDefinition
     : IntType Identifier Semi
