@@ -1,5 +1,5 @@
 // Define a grammar called Test
-grammar Newton;
+grammar Newton_old;
 
 program_begin
     : BeginProgram BeginBlock cond_variables_dcl functions_dcl main EndBlock;
@@ -114,6 +114,8 @@ data_type
 main
     : MainFnc BracketLeft BracketRight BeginBlock function_block EndBlock;
 
+
+
 BeginProgram : 'start_program';
 BeginBlock : 'begin';
 EndBlock : 'end';
@@ -132,12 +134,13 @@ DoubleType : 'double';
 BoolType : 'bool';
 BeginFunction : 'fnc';
 If : 'if';
+Else: 'else';
 While : 'while';
 BracketLeft : '(';
 BracketRight : ')';
 Assign : '=';
 Semi : ';';
-RelationOp : '<' | '>' | '<=' | '>=' '==';
+RelationOp : '<' | '>' | '<=' | '>=' | '==';
 LogicalOp : '&&' | '||';
 Identifier: [a-zA-Z]+[a-zA-Z0-9]*;
 WS :  [ \t\r\n]+ -> skip;

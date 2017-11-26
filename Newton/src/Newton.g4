@@ -1,122 +1,4 @@
-// Define a grammar called Test
 grammar Newton;
-
-program_begin
-    : BeginProgram BeginBlock cond_variables_dcl functions_dcl main EndBlock;
-
-cond_variables_dcl
-    : variables_dcl cond_variables_dcl
-    | constants_dcl cond_variables_dcl
-    | ;
-
-variables_dcl
-    : BoolType Identifier Assign expression_cond Semi
-    | IntType Identifier Assign expression Semi
-    | DoubleType Identifier Assign expression Semi;
-
-constants_dcl
-	: Const BoolType Identifier Assign expression_cond Semi
-    | Const Identifier Assign function_call Semi
-	| Const IntType Identifier Assign expression Semi
-    | Const DoubleType Identifier Assign expression Semi;
-
-functions_dcl
-    : function_dcl_single functions_dcl
-    | ;
-
-function_dcl_single
-    : BeginFunction function_return_type Identifier BracketLeft parameters BracketRight BeginBlock function_block EndBlock;
-
-function_return_type
-    : data_type
-    | VoidType;
-
-function_block
-    : variables_dcl_function block;
-
-variables_dcl_function
-    : variables_dcl variables_dcl_function
-    | ;
-
-block // TODO: dalsi cykly
-    : function_call Semi block
-    | assignment Semi block
-    | if_cond block
-    | while_cond block
-    | ;
-    // povolit prazdny strednik
-    // pridat begin end do blck
-
-function_call
-    : Identifier BracketLeft function_call_params BracketRight Semi;
-
-function_call_params // Nelze udelat pouze condition?
-    : expression
-    | expression ',' function_call_params
-    | expression_cond ',' function_call_params
-    | ;
-
-parameters
-    : data_type Identifier
-    | data_type Identifier ',' parameters
-    | ;
-
-assignment // INFO: osetrit v kodu, ze neprirazujeme spatny typ (pr. boolean do int)
-    : Identifier Assign expression
-    | Identifier Assign expression_cond // Mozna zbytecne
-    | Identifier Assign condition;
-
-expression
-    : expression Add expression_priority
-    | expression Sub expression_priority
-    | expression_priority;
-
-expression_priority
-    : expression_priority Mul expression_item
-    | expression_priority Div expression_item
-    | expression_item;
-
-expression_item
-    : Identifier
-    | Int
-    | Double
-    | Boolean
-    | Add Int
-    | Sub Int
-    | Add Double
-    | Sub Double
-    | '(' expression ')';
-
-if_cond
-    : If BracketLeft condition BracketRight BeginBlock block EndBlock;
-
-while_cond
-    : While BracketLeft condition BracketRight BeginBlock block EndBlock;
-
-condition
-    : expression_cond
-    | expression LogicalOp expression_cond;
-
-expression_cond
-    : Boolean
-    | condition_item RelationOp condition_item;
-
-condition_item
-    : Boolean
-    | expression
-    | '(' Boolean ')';
-
-data_type
-    : IntType
-    | DoubleType
-    | BoolType;
-
-main
-    : MainFnc BracketLeft BracketRight BeginBlock function_block EndBlock;
-
-
-//New gramatic
-
 // chybi negace
 
 program
@@ -126,36 +8,33 @@ programHeading
     : constantDefinitionPart variableDefinitionPart;
 
 constantDefinitionPart
-    : 'constant:' constantDefinition*;
+    : DefConstant constantDefinition*;
 
 constantDefinition
     : Const IntType Identifier Assign Int Semi
-    | Const DoubleType Identifier Assign Double Semi;
+    | Const DoubleType Identifier Assign Double Semi
+    | Const BoolType Identifier Assign Boolean Semi;
 
 variableDefinitionPart
-    : 'variable:' variableDefinition*;
+    : DefVariable variableDefinition*;
 
 variableDefinition
-    : IntType Identifier Semi
-    | DoubleType Identifier Semi
-    | BoolType Identifier Semi;
+    : baseType Identifier Semi;
 
 mainStatement
-    : 'main' BracketLeft BracketRight statement* EndBlock;
+    : MainFnc BracketLeft BracketRight statement* EndBlock;
 
 functionStatement
     : BeginFunction VoidType Identifier BracketLeft tag? BracketRight statement* EndBlock
-    | BeginFunction baseType Identifier BracketLeft tag? BracketRight statement* 'return' tExpression ';' EndBlock;
-
+    | BeginFunction baseType Identifier BracketLeft tag? BracketRight statement* ReturnFunctin expression Semi EndBlock;
 
 tag
-    : baseType Identifier (',' baseType Identifier)*;
+    : baseType Identifier (Comma baseType Identifier)*;
 
 baseType
     : IntType
     | DoubleType
     | BoolType;
-
 
 statement
     : conditionalStatement
@@ -164,13 +43,13 @@ statement
     | callFunctionStatement;
 
 assignmentStatement
-    : Identifier Assign tExpression Semi;
+    : Identifier Assign expression Semi;
 
 callFunctionStatement
     : (Identifier Assign)? Identifier BracketLeft parameterList? BracketRight Semi;
 
 parameterList
-    : tExpression (',' tExpression)?;
+    : expression (Comma expression)?;
 
 loopStatement
     : whileStatement
@@ -178,26 +57,26 @@ loopStatement
     | doWhileStatement;
 
 whileStatement
-    : While tExpression 'do' statement* 'endwhile';
+    : BeginWhile expression Do statement* EndWhile;
 
 forStatement
-    : 'for' (Identifier '=')? factor ':' factor (':' Int)? 'do' statement* 'endfor';   // for a = 1:10:2 (1 az 10 po 2)
+    : BeginFor (Identifier Assign)? factor Colon factor (Colon Int)? Do statement* EndFor;   // for a = 1:10:2 (1 az 10 po 2)
 
 doWhileStatement
-    : 'repeat' statement* 'until' tExpression;
+    : Repeat statement* Until expression;
 
 conditionalStatement
     : ifStatement
     | caseStatement;
 
 caseStatement
-    : 'switch' simpleExpression 'of' (Int ':' statement)+ 'default' ':' + statement 'endswitch';
+    : BeginSwitch simpleExpression Of (Int Colon statement)+ DefaultSwitch Colon + statement EndSwitch;
 
 ifStatement
-    : If tExpression 'then' statement (Else statement*)? 'endif';
+    : BeginIf expression Then statement (Else statement*)? EndIf;
 
-tExpression
-    : simpleExpression (RelationOp simpleExpression)* (LogicalOp tExpression)*;
+expression
+    : simpleExpression (RelationOp simpleExpression)* (LogicalOp expression)*;
 
 
 simpleExpression
@@ -214,10 +93,10 @@ factor
     | Identifier;
 
 
-BeginProgram : 'start_program';
-BeginBlock : 'begin';
 EndBlock : 'end';
 MainFnc : 'main';
+DefConstant : 'constant:';
+DefVariable : 'variable:';
 Add : '+';
 Sub : '-';
 Mul : '*';
@@ -231,12 +110,27 @@ Double: [0-9]+('.'[0-9]+);
 DoubleType : 'double';
 BoolType : 'bool';
 BeginFunction : 'fnc';
-If : 'if';
+ReturnFunctin : 'return';
+BeginIf : 'if';
+EndIf : 'endif';
+Then : 'then';
+Do : 'do';
+Of : 'of';
 Else: 'else';
-While : 'while';
+BeginWhile : 'while';
+EndWhile : 'endwhile';
+BeginSwitch : 'switch';
+EndSwitch : 'endswitch';
+DefaultSwitch : 'default';
+BeginFor : 'for';
+EndFor : 'endfor';
+Repeat : 'repeat';
+Until : 'until';
 BracketLeft : '(';
 BracketRight : ')';
 Assign : '=';
+Comma : ',';
+Colon : ':';
 Semi : ';';
 RelationOp : '<' | '>' | '<=' | '>=' | '==';
 LogicalOp : '&&' | '||';
