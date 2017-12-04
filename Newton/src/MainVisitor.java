@@ -11,7 +11,7 @@ public class MainVisitor extends NewtonBaseVisitor<Integer> {
 
     private static final Map<String, Variable> CONSTANTS = new HashMap<>();
 
-    private static final List<String> ERRORS = new LinkedList<>();
+    private static final List<String> MESSAGES = new LinkedList<>();
 
     private boolean isVariableDeclared(String name) {
         return VARIABLES.containsKey(name) || CONSTANTS.containsKey(name);
@@ -28,20 +28,20 @@ public class MainVisitor extends NewtonBaseVisitor<Integer> {
         System.out.println("----- VARIABLES ------");
         VARIABLES.values().stream().forEach(System.out::println);
 
-        System.out.println("------ ERRORS -------");
-        ERRORS.stream().forEach(System.out::println);
+        System.out.println("------ MESSAGES -------");
+        MESSAGES.stream().forEach(System.out::println);
 
         return result;
     }
 
     @Override
     public Integer visitVariableDefinition(NewtonParser.VariableDefinitionContext ctx) {
+
         String variableName = ctx.Identifier().getText();
         String type = ctx.baseType().getText();
 
         if (isVariableDeclared(variableName)) {
-            ERRORS.add("Nelze definovat vice promenych se stejnym nazvem.");
-            return null;
+            MESSAGES.add(MessageUtil.create(MessageType.VARIABLE_IS_DECLARED, ctx)); return null;
         }
 
         VARIABLES.put(variableName, new Variable(variableName, DataType.valueOf(type.toUpperCase())));
@@ -55,8 +55,7 @@ public class MainVisitor extends NewtonBaseVisitor<Integer> {
         String variableName = ctx.Identifier().getText();
 
         if (isVariableDeclared(variableName)) {
-            ERRORS.add("Nelze definovat vice konstant se stejnym nazvem.");
-            return null;
+            MESSAGES.add(MessageUtil.create(MessageType.CONSTANT_IS_DECLARED, ctx)); return null;
         }
 
         if (ctx.IntType() != null) {
@@ -79,8 +78,7 @@ public class MainVisitor extends NewtonBaseVisitor<Integer> {
         Variable variable = VARIABLES.get(variableName);
 
         if (variable == null) {
-            ERRORS.add("Nelze inicializovat neznamou promenou '"+variableName+"'.");
-            return null;
+            MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx)); return null;
         }
 
         if (variable.getDataType().equals(DataType.BOOL)) {
@@ -89,8 +87,7 @@ public class MainVisitor extends NewtonBaseVisitor<Integer> {
             } else if (value.contains("false")) {
                 value = "0";
             } else {
-                ERRORS.add(("Bool může obsahovat pouze hodnoty true nebo false."));
-                return null;
+                MESSAGES.add(MessageUtil.create(MessageType.WRONG_INITIALIZE, ctx)); return null;
             }
         }
 
