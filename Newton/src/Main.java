@@ -19,7 +19,7 @@ public class Main {
             NewtonParser parser = new NewtonParser(tokens);
             ParserRuleContext ruleContext = parser.program();
 
-          //  Trees.inspect(ruleContext, parser);
+         //   Trees.inspect(ruleContext, parser);
 
             MainVisitor visitor = new MainVisitor();
             visitor.visit(ruleContext);

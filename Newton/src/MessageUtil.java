@@ -9,6 +9,7 @@ public class MessageUtil {
 
     public static String create(MessageType type, ParserRuleContext ctx) {
         int line = ctx.getStart().getCharPositionInLine();
-        return MessageFormat.format(type.getPattern(), line);
+        Object [] params = {line, line, " =xx"};
+        return MessageFormat.format(type.getPattern(), params);
     }
 }

@@ -7,6 +7,8 @@ import java.util.Map;
 
 public class MainVisitor extends NewtonBaseVisitor<Integer> {
 
+    private static final List<Instruction> INSTRUCTIONS = new LinkedList<>();
+
     private static final Map<String, Variable> VARIABLES = new HashMap<>();
 
     private static final Map<String, Variable> CONSTANTS = new HashMap<>();

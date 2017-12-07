@@ -2,7 +2,6 @@ constant:
     const int a = 1;
     const bool b = false;
     const double c = 0.3;
-    const double c = 0.4;
 variable:
     int d;
     bool e;
