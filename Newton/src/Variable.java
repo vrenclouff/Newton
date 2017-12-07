@@ -4,21 +4,15 @@
 public class Variable {
 
     private String name;
-
     private DataType dataType;
-
     private Double value;
+    private String stackPosition;
 
-    public Variable(String name, DataType dataType) {
+    public Variable(String name, DataType dataType, String stackPosition) {
         this.name = name;
         this.dataType = dataType;
         this.value = new Double(0);
-    }
-
-    public Variable(String name, DataType dataType, Double value) {
-        this.name = name;
-        this.dataType = dataType;
-        this.value = value;
+        this.stackPosition = stackPosition;
     }
 
     public Double getValue() {
@@ -35,6 +29,10 @@ public class Variable {
 
     public DataType getDataType() {
         return dataType;
+    }
+
+    public String getStackPosition() {
+        return stackPosition;
     }
 
     @Override

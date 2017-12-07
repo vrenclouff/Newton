@@ -4,7 +4,6 @@
 public class Instruction {
 
     private InstructionType type;
-
     private String value;
 
     public Instruction(InstructionType type, String value) {
@@ -18,5 +17,10 @@ public class Instruction {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return type + " " + value;
     }
 }

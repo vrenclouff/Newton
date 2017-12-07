@@ -1,13 +1,8 @@
 constant:
     const int a = 1;
-    const bool b = false;
-    const double c = 0.3;
 variable:
-    int d;
-    bool e;
-
+    int b;
 main()
-    d = 5;
-    e = true;
+    b = 3;
 end
     
