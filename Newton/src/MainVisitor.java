@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class MainVisitor extends NewtonBaseVisitor<Integer> {
+public class MainVisitor extends NewtonBaseVisitor<Void> {
 
     private static final List<Instruction> INSTRUCTIONS = new LinkedList<>();
 
@@ -20,9 +20,9 @@ public class MainVisitor extends NewtonBaseVisitor<Integer> {
     }
 
     @Override
-    public Integer visitProgram(NewtonParser.ProgramContext ctx) {
+    public Void visitProgram(NewtonParser.ProgramContext ctx) {
 
-        Integer result = super.visitProgram(ctx);
+        super.visitProgram(ctx);
 
         System.out.println("----- CONSTANTS ------");
         CONSTANTS.values().stream().forEach(System.out::println);
@@ -30,14 +30,11 @@ public class MainVisitor extends NewtonBaseVisitor<Integer> {
         System.out.println("----- VARIABLES ------");
         VARIABLES.values().stream().forEach(System.out::println);
 
-        System.out.println("------ MESSAGES -------");
-        MESSAGES.stream().forEach(System.out::println);
-
-        return result;
+        return null;
     }
 
     @Override
-    public Integer visitVariableDefinition(NewtonParser.VariableDefinitionContext ctx) {
+    public Void visitVariableDefinition(NewtonParser.VariableDefinitionContext ctx) {
 
         String variableName = ctx.Identifier().getText();
         String type = ctx.baseType().getText();
@@ -52,7 +49,7 @@ public class MainVisitor extends NewtonBaseVisitor<Integer> {
     }
 
     @Override
-    public Integer visitConstantDefinition(NewtonParser.ConstantDefinitionContext ctx) {
+    public Void visitConstantDefinition(NewtonParser.ConstantDefinitionContext ctx) {
 
         String variableName = ctx.Identifier().getText();
 
@@ -72,7 +69,7 @@ public class MainVisitor extends NewtonBaseVisitor<Integer> {
     }
 
     @Override
-    public Integer visitAssignmentStatement(NewtonParser.AssignmentStatementContext ctx) {
+    public Void visitAssignmentStatement(NewtonParser.AssignmentStatementContext ctx) {
 
         String variableName = ctx.Identifier().getText();
         String value = ctx.expression().getText();
@@ -96,5 +93,13 @@ public class MainVisitor extends NewtonBaseVisitor<Integer> {
         variable.setValue(new Double(value));
 
         return super.visitAssignmentStatement(ctx);
+    }
+
+    public List<Instruction> getInstructions() {
+        return INSTRUCTIONS;
+    }
+
+    public List<String> getMessages() {
+        return MESSAGES;
     }
 }

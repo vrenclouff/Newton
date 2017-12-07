@@ -24,6 +24,9 @@ public class Main {
             MainVisitor visitor = new MainVisitor();
             visitor.visit(ruleContext);
 
+            System.out.println("------ MESSAGES -------");
+            visitor.getMessages().stream().forEach(System.out::println);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
