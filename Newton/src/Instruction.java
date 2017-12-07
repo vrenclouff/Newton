@@ -4,11 +4,25 @@
 public class Instruction {
 
     private InstructionType type;
+    private int level;
     private String value;
 
-    public Instruction(InstructionType type, String value) {
+    public Instruction(InstructionType type, int level, String value) {
         this.type = type;
+        this.level = level;
         this.value = value;
+    }
+
+    public Instruction(InstructionType type, int level, int value) {
+        this(type, level, String.valueOf(value));
+    }
+
+    public Instruction(InstructionType type, int value) {
+        this(type, 0, String.valueOf(value));
+    }
+
+    public Instruction(InstructionType type, String value) {
+        this(type, 0, value);
     }
 
     public InstructionType getType() {
@@ -19,8 +33,12 @@ public class Instruction {
         return value;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
     @Override
     public String toString() {
-        return type + " " + value;
+        return type + "\t" + level + "\t" + value;
     }
 }

@@ -4,6 +4,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 public class Main {
     private static final String INPUT = "testSimpleInput.txt";
@@ -24,11 +26,28 @@ public class Main {
             MainVisitor visitor = new MainVisitor();
             visitor.visit(ruleContext);
 
-            System.out.println("------ MESSAGES -------");
-            visitor.getMessages().stream().forEach(System.out::println);
+            printMessages(visitor);
+            printInstructions(visitor);
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void printMessages(MainVisitor visitor) {
+        List messages = visitor.getMessages();
+        if (messages.isEmpty()) { return; }
+        System.out.println("------ MESSAGES -------");
+        visitor.getMessages().stream().forEach(System.out::println);
+    }
+
+    private static void printInstructions(MainVisitor visitor) {
+        if (!visitor.getMessages().isEmpty()) { return; }
+        Iterator instructions = visitor.getInstructions().iterator();
+        int line = 1;
+        System.out.println("----- INSTRUCTIONS ------");
+        while(instructions.hasNext()) {
+            System.out.println((line++) + "\t" + instructions.next());
         }
     }
 }

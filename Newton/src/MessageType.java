@@ -11,6 +11,7 @@
 public enum MessageType {
     VARIABLE_IS_DECLARED            (Type.ERROR, "at line {0}. Variable was declared."),
     CONSTANT_IS_DECLARED            (Type.ERROR, "at line {0}. Constant was declared."),
+    CONSTANT_INITIALIZE             (Type.ERROR, "at line {0}. Constant can not be initialized."),
     CAN_NOT_INITIALIZE_CONSTANT     (Type.ERROR, "at line {0}. Constant can not be initialized."),
     UNDEFINED_VARIABLE              (Type.ERROR, "at line {0}. Variable is undefined."),
     WRONG_INITIALIZE                (Type.ERROR, "at line {0}. Incompatible types."),

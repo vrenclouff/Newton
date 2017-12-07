@@ -1,8 +1,8 @@
 constant:
     const int a = 1;
 variable:
-    int b;
+
 main()
-    b = 3;
+
 end
     

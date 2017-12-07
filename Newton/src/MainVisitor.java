@@ -19,6 +19,14 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
 
     private int stackSize = 0;
 
+    public List<Instruction> getInstructions() {
+        return INSTRUCTIONS;
+    }
+
+    public List<String> getMessages() {
+        return MESSAGES;
+    }
+
     private boolean isVariableDeclared(String name) {
         return VARIABLES.containsKey(name) || CONSTANTS.containsKey(name);
     }
@@ -26,18 +34,23 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     @Override
     public Void visitProgram(NewtonParser.ProgramContext ctx) {
 
-        super.visitProgram(ctx);
+        // vygenerovani opakujicich se kusu bloku, atd
 
-        System.out.println("----- INSTRUCTIONS ------");
-        INSTRUCTIONS.stream().forEach(System.out::println);
+        return super.visitProgram(ctx);
+    }
 
-        System.out.println("----- CONSTANTS ------");
-        CONSTANTS.values().stream().forEach(System.out::println);
+    @Override
+    public Void visitMainStatement(NewtonParser.MainStatementContext ctx) {
 
-        System.out.println("----- VARIABLES ------");
-        VARIABLES.values().stream().forEach(System.out::println);
+        if (!ctx.statement().isEmpty()) {
+            // skoc na prvni instrukci v mainu
+            INSTRUCTIONS.add(0, new Instruction(InstructionType.CAL, INSTRUCTIONS.size() + 1));
+        } else {
+            // pokud je main prazdny, vytvori se pouze instrukce pro promene a konstanty
+            INSTRUCTIONS.add(0, new Instruction(InstructionType.JMP, 2));
+        }
 
-        return null;
+        return super.visitMainStatement(ctx);
     }
 
     @Override
@@ -49,33 +62,46 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
             MESSAGES.add(MessageUtil.create(MessageType.VARIABLE_IS_DECLARED, ctx)); return null;
         }
 
-        INSTRUCTIONS.add(new Instruction(InstructionType.INT, 1+""));
+        INSTRUCTIONS.add(new Instruction(InstructionType.INT, 1));
         stackSize++;
-        VARIABLES.put(variableName, new Variable(variableName, DataType.valueOf(type.toUpperCase()), stackSize + ""));
+        VARIABLES.put(variableName, new Variable(variableName, DataType.valueOf(type.toUpperCase()), stackSize));
 
         return super.visitVariableDefinition(ctx);
     }
 
     @Override
     public Void visitConstantDefinition(NewtonParser.ConstantDefinitionContext ctx) {
+
         String variableName = ctx.Identifier().getText();
 
         if (isVariableDeclared(variableName)) {
             MESSAGES.add(MessageUtil.create(MessageType.CONSTANT_IS_DECLARED, ctx)); return null;
         }
-        INSTRUCTIONS.add(new Instruction(InstructionType.INT, 1+""));
+
+        Variable variable = null;
+        String value = null;
+
+        INSTRUCTIONS.add(new Instruction(InstructionType.INT, 1));
         stackSize++;
-        INSTRUCTIONS.add(new Instruction(InstructionType.LIT, new Double(ctx.Int().getText()) + ""));
-        stackSize++;
-        INSTRUCTIONS.add(new Instruction(InstructionType.LOD, (stackSize - 1) + ""));
 
         if (ctx.IntType() != null) {
-            CONSTANTS.put(variableName, new Variable(variableName, DataType.INT, ""));
+            value = ctx.Int().getText();
+            variable = new Variable(variableName, DataType.INT, stackSize);
         } else if (ctx.DoubleType() != null) {
-            CONSTANTS.put(variableName, new Variable(variableName, DataType.DOUBLE, ""));
+            value = ctx.Double().getText();
+            variable = new Variable(variableName, DataType.DOUBLE, stackSize);
         } else if (ctx.BoolType() != null) {
-            CONSTANTS.put(variableName, new Variable(variableName, DataType.BOOL, ""));
+            value = ctx.Boolean().getText();
+            variable = new Variable(variableName, DataType.BOOL, stackSize);
         }
+
+
+        INSTRUCTIONS.add(new Instruction(InstructionType.LIT, value));
+        stackSize++;
+
+        INSTRUCTIONS.add(new Instruction(InstructionType.STO, variable.getStackPosition()));
+
+        VARIABLES.put(variableName, variable);
 
         return super.visitConstantDefinition(ctx);
     }
@@ -85,41 +111,31 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         String variableName = ctx.Identifier().getText();
         String value = ctx.expression().getText();
 
-        Variable variable = VARIABLES.get(variableName);
+        if (CONSTANTS.containsKey(variableName)) {
+            MESSAGES.add(MessageUtil.create(MessageType.CONSTANT_INITIALIZE, ctx)); return null;
+        }
 
-        INSTRUCTIONS.add(new Instruction(InstructionType.LIT, value));
-        INSTRUCTIONS.add(new Instruction(InstructionType.STO, variable.getStackPosition()));
+        Variable variable = VARIABLES.get(variableName);
 
         if (variable == null) {
             MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx)); return null;
         }
 
         if (variable.getDataType().equals(DataType.BOOL)) {
-            if (value.contains("true")) {
+            if (value.equals("true")) {
                 value = "1";
-            } else if (value.contains("false")) {
+            } else if (value.equals("false")) {
                 value = "0";
             } else {
                 MESSAGES.add(MessageUtil.create(MessageType.WRONG_INITIALIZE, ctx)); return null;
             }
         }
 
-        variable.setValue(new Double(value));
+        INSTRUCTIONS.add(new Instruction(InstructionType.LIT, value));
+        stackSize++;
+
+        INSTRUCTIONS.add(new Instruction(InstructionType.STO, variable.getStackPosition()));
 
         return super.visitAssignmentStatement(ctx);
-    }
-
-    public List<Instruction> getInstructions() {
-        return INSTRUCTIONS;
-    }
-
-    public List<String> getMessages() {
-        return MESSAGES;
-    }
-
-    @Override
-    public Void visitMainStatement(NewtonParser.MainStatementContext ctx) {
-        INSTRUCTIONS.add(0, new Instruction(InstructionType.JMP, (INSTRUCTIONS.size() + 1) + ""));
-        return super.visitMainStatement(ctx);
     }
 }
