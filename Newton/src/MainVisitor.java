@@ -17,7 +17,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
 
     private final List<String> MESSAGES = new LinkedList<>();
 
-    private int stackSize = 0;
+    private int stackSize = 2;  // Aktivacni zaznam, vyresit lip
 
     public List<Instruction> getInstructions() {
         return INSTRUCTIONS;
@@ -47,7 +47,8 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
             INSTRUCTIONS.add(0, new Instruction(InstructionType.CAL, INSTRUCTIONS.size() + 1));
         } else {
             // pokud je main prazdny, vytvori se pouze instrukce pro promene a konstanty
-            INSTRUCTIONS.add(0, new Instruction(InstructionType.JMP, 2));
+            INSTRUCTIONS.add(0, new Instruction(InstructionType.JMP, 1));
+            INSTRUCTIONS.add(1, new Instruction(InstructionType.INT, 3));   // Pro aktivacni zaznam
         }
 
         return super.visitMainStatement(ctx);
@@ -95,10 +96,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
             variable = new Variable(variableName, DataType.BOOL, stackSize);
         }
 
-
         INSTRUCTIONS.add(new Instruction(InstructionType.LIT, value));
-        stackSize++;
-
         INSTRUCTIONS.add(new Instruction(InstructionType.STO, variable.getStackPosition()));
 
         VARIABLES.put(variableName, variable);

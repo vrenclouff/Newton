@@ -44,7 +44,7 @@ public class Main {
     private static void printInstructions(MainVisitor visitor) {
         if (!visitor.getMessages().isEmpty()) { return; }
         Iterator instructions = visitor.getInstructions().iterator();
-        int line = 1;
+        int line = 0;
         System.out.println("----- INSTRUCTIONS ------");
         while(instructions.hasNext()) {
             System.out.println((line++) + "\t" + instructions.next());

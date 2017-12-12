@@ -1,5 +1,7 @@
 constant:
     const int a = 1;
+    const int b = 3;
+    const int c = 10;
 variable:
 
 main()
