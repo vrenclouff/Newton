@@ -41,15 +41,16 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
 
     @Override
     public Void visitMainStatement(NewtonParser.MainStatementContext ctx) {
-
         if (!ctx.statement().isEmpty()) {
             // skoc na prvni instrukci v mainu
-            INSTRUCTIONS.add(0, new Instruction(InstructionType.CAL, INSTRUCTIONS.size() + 1));
+            INSTRUCTIONS.add(0, new Instruction(InstructionType.INT, 3));   // Pro aktivacni zaznam
+            INSTRUCTIONS.add(1, new Instruction(InstructionType.CAL, INSTRUCTIONS.size() + 1));
         } else {
             // pokud je main prazdny, vytvori se pouze instrukce pro promene a konstanty
             INSTRUCTIONS.add(0, new Instruction(InstructionType.JMP, 1));
             INSTRUCTIONS.add(1, new Instruction(InstructionType.INT, 3));   // Pro aktivacni zaznam
         }
+
 
         return super.visitMainStatement(ctx);
     }
