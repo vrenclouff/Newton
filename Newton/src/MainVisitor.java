@@ -89,9 +89,6 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         if (ctx.IntType() != null) {
             value = ctx.Int().getText();
             variable = new Variable(variableName, DataType.INT, stackSize);
-        } else if (ctx.DoubleType() != null) {
-            value = ctx.Double().getText();
-            variable = new Variable(variableName, DataType.DOUBLE, stackSize);
         } else if (ctx.BoolType() != null) {
             value = ctx.Boolean().getText();
             variable = new Variable(variableName, DataType.BOOL, stackSize);
