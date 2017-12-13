@@ -82,6 +82,18 @@ public interface NewtonVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssignmentStatement(NewtonParser.AssignmentStatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link NewtonParser#multipleAssigmentStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMultipleAssigmentStatement(NewtonParser.MultipleAssigmentStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link NewtonParser#parallelAssigmentStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParallelAssigmentStatement(NewtonParser.ParallelAssigmentStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link NewtonParser#callFunctionStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -135,6 +147,12 @@ public interface NewtonVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIfStatement(NewtonParser.IfStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link NewtonParser#ternaryStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTernaryStatement(NewtonParser.TernaryStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link NewtonParser#expression}.
 	 * @param ctx the parse tree

@@ -1,10 +1,9 @@
 constant:
     const int a = 3;
-    const double b = 0.5; 
-    
+
 variable:
     int c;
-    double d; 
+    int d;
     bool e;
 
 fnc int ifFunction()
@@ -45,6 +44,7 @@ fnc bool switchFunction(int param)
 end
 
 main()
+    {c, d} = {1, 2};
     b = call();
     fncCall(b);
 end

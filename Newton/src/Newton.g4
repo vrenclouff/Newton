@@ -12,7 +12,6 @@ constantDefinitionPart
 
 constantDefinition
     : Const IntType Identifier Assign Int Semi
-    | Const DoubleType Identifier Assign Double Semi
     | Const BoolType Identifier Assign Boolean Semi;
 
 variableDefinitionPart
@@ -22,31 +21,37 @@ variableDefinition
     : baseType Identifier Semi;
 
 mainStatement
-    : MainFnc BracketLeft BracketRight statement* EndBlock;
+    : MainFnc RoundBracketLeft RoundBracketRight statement* EndBlock;
 
 functionStatement
-    : BeginFunction VoidType Identifier BracketLeft tag? BracketRight statement* EndBlock
-    | BeginFunction baseType Identifier BracketLeft tag? BracketRight statement* ReturnFunctin expression Semi EndBlock;
+    : BeginFunction VoidType Identifier RoundBracketLeft tag? RoundBracketRight statement* EndBlock
+    | BeginFunction baseType Identifier RoundBracketLeft tag? RoundBracketRight statement* ReturnFunctin expression Semi EndBlock;
 
 tag
     : baseType Identifier (Comma baseType Identifier)*;
 
 baseType
     : IntType
-    | DoubleType
     | BoolType;
 
 statement
     : conditionalStatement
     | loopStatement
     | assignmentStatement
+    | parallelAssigmentStatement
     | callFunctionStatement;
 
 assignmentStatement
-    : Identifier Assign expression Semi;
+    : Identifier Assign multipleAssigmentStatement* (expression | ternaryStatement) Semi;
+
+multipleAssigmentStatement
+    : Identifier Assign;
+
+parallelAssigmentStatement
+    : CurlyBracketLeft Identifier (',' Identifier)* CurlyBracketRight Assign CurlyBracketLeft expression (',' expression)* CurlyBracketRight Semi;
 
 callFunctionStatement
-    : (Identifier Assign)? Identifier BracketLeft parameterList? BracketRight Semi;
+    : (Identifier Assign)? Identifier RoundBracketLeft parameterList? RoundBracketRight Semi;
 
 parameterList
     : expression (Comma expression)?;
@@ -75,6 +80,9 @@ caseStatement
 ifStatement
     : BeginIf expression Then statement (Else statement*)? EndIf;
 
+ternaryStatement
+    : expression Ques expression Colon expression;
+
 expression
     : simpleExpression (RelationOp simpleExpression)* (LogicalOp expression)*;
 
@@ -84,12 +92,11 @@ simpleExpression
 
 term
     : factor ((Mul | Div) factor)*
-    | BracketLeft simpleExpression BracketRight ((Add | Sub | Mul | Div) simpleExpression)?;
+    | RoundBracketLeft simpleExpression RoundBracketRight ((Add | Sub | Mul | Div) simpleExpression)?;
 
 factor
     : Int
     | Boolean
-    | Double
     | Identifier;
 
 
@@ -106,8 +113,6 @@ IntType : 'int';
 Boolean : 'true' | 'false';
 VoidType : 'void';
 Int : [-+]?[0-9]+; // ([0-9]+)
-Double: [0-9]+('.'[0-9]+);
-DoubleType : 'double';
 BoolType : 'bool';
 BeginFunction : 'fnc';
 ReturnFunctin : 'return';
@@ -126,12 +131,15 @@ BeginFor : 'for';
 EndFor : 'endfor';
 Repeat : 'repeat';
 Until : 'until';
-BracketLeft : '(';
-BracketRight : ')';
+RoundBracketLeft : '(';
+RoundBracketRight : ')';
+CurlyBracketLeft : '{';
+CurlyBracketRight : '}';
 Assign : '=';
 Comma : ',';
 Colon : ':';
 Semi : ';';
+Ques : '?';
 RelationOp : '<' | '>' | '<=' | '>=' | '==';
 LogicalOp : '&&' | '||';
 Identifier: [a-zA-Z]+[a-zA-Z0-9]*;
