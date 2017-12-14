@@ -16,6 +16,7 @@ public enum MessageType {
     UNDEFINED_VARIABLE              (Type.ERROR, "at line {0}. Variable is undefined."),
     WRONG_INITIALIZE                (Type.ERROR, "at line {0}. Incompatible types."),
     UNSUPPORTED_OPERATION           (Type.ERROR, "at line {0}. Unsupported operation."),
+    PARALLEL_WRONG_OPERAND_SIZE     (Type.ERROR, "AT LINE {0}. Number of variables doesn't equal of number of values.")
 
     ;
     private final Type type;

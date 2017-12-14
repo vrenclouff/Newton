@@ -162,6 +162,28 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     }
 
     @Override
+    public Void visitParallelAssignmentStatement(NewtonParser.ParallelAssignmentStatementContext ctx) {
+
+        if (ctx.Identifier().size() != ctx.simpleFactor().size()) {
+            MESSAGES.add(MessageUtil.create(MessageType.PARALLEL_WRONG_OPERAND_SIZE, ctx)); return null;
+        }
+
+        for (int ind = 0; ind < ctx.Identifier().size(); ind++) {
+
+            Variable variable = VARIABLES.get(ctx.Identifier().get(ind).getText());
+
+            if (variable == null) {
+                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx)); return null;
+            }
+
+            visit(ctx.simpleFactor().get(ind));
+            INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
+        }
+
+        return null;
+    }
+
+    @Override
     public Void visitAssignmentStatement(NewtonParser.AssignmentStatementContext ctx) {
         String variableName = ctx.Identifier().getText();
 
@@ -179,7 +201,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
 
         INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
 
-        ctx.multipleAssigmentStatement().forEach(e -> {
+        ctx.multipleAssignmentStatement().forEach(e -> {
 
             Variable var = VARIABLES.get(e.Identifier().getText());
 

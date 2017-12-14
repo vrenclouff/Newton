@@ -100,14 +100,14 @@ public class NewtonBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMultipleAssigmentStatement(NewtonParser.MultipleAssigmentStatementContext ctx) { return visitChildren(ctx); }
+	@Override public T visitMultipleAssignmentStatement(NewtonParser.MultipleAssignmentStatementContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitParallelAssigmentStatement(NewtonParser.ParallelAssigmentStatementContext ctx) { return visitChildren(ctx); }
+	@Override public T visitParallelAssignmentStatement(NewtonParser.ParallelAssignmentStatementContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

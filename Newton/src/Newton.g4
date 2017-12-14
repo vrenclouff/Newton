@@ -38,16 +38,16 @@ statement
     : conditionalStatement
     | loopStatement
     | assignmentStatement
-    | parallelAssigmentStatement
+    | parallelAssignmentStatement
     | callFunctionStatement;
 
 assignmentStatement
-    : Identifier Assign multipleAssigmentStatement* (expression | ternaryStatement) Semi;
+    : Identifier Assign multipleAssignmentStatement* (expression | ternaryStatement) Semi;
 
-multipleAssigmentStatement
+multipleAssignmentStatement
     : Identifier Assign;
 
-parallelAssigmentStatement
+parallelAssignmentStatement
     : CurlyBracketLeft Identifier (',' Identifier)* CurlyBracketRight Assign CurlyBracketLeft simpleFactor (',' simpleFactor)* CurlyBracketRight Semi;
 
 callFunctionStatement

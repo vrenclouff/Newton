@@ -82,17 +82,17 @@ public interface NewtonVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssignmentStatement(NewtonParser.AssignmentStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link NewtonParser#multipleAssigmentStatement}.
+	 * Visit a parse tree produced by {@link NewtonParser#multipleAssignmentStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMultipleAssigmentStatement(NewtonParser.MultipleAssigmentStatementContext ctx);
+	T visitMultipleAssignmentStatement(NewtonParser.MultipleAssignmentStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link NewtonParser#parallelAssigmentStatement}.
+	 * Visit a parse tree produced by {@link NewtonParser#parallelAssignmentStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitParallelAssigmentStatement(NewtonParser.ParallelAssigmentStatementContext ctx);
+	T visitParallelAssignmentStatement(NewtonParser.ParallelAssignmentStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link NewtonParser#callFunctionStatement}.
 	 * @param ctx the parse tree

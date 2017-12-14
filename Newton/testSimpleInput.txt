@@ -3,6 +3,6 @@ variable:
     int a;
     int c;
 main()
-    a = c = 5;
+    {a, c} = {5, 6};
 end
     

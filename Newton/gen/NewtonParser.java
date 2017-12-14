@@ -28,8 +28,8 @@ public class NewtonParser extends Parser {
 		RULE_program = 0, RULE_programHeading = 1, RULE_constantDefinitionPart = 2, 
 		RULE_constantDefinition = 3, RULE_variableDefinitionPart = 4, RULE_variableDefinition = 5, 
 		RULE_mainStatement = 6, RULE_functionStatement = 7, RULE_tag = 8, RULE_baseType = 9, 
-		RULE_statement = 10, RULE_assignmentStatement = 11, RULE_multipleAssigmentStatement = 12, 
-		RULE_parallelAssigmentStatement = 13, RULE_callFunctionStatement = 14, 
+		RULE_statement = 10, RULE_assignmentStatement = 11, RULE_multipleAssignmentStatement = 12, 
+		RULE_parallelAssignmentStatement = 13, RULE_callFunctionStatement = 14, 
 		RULE_parameterList = 15, RULE_loopStatement = 16, RULE_whileStatement = 17, 
 		RULE_forStatement = 18, RULE_doWhileStatement = 19, RULE_conditionalStatement = 20, 
 		RULE_caseStatement = 21, RULE_ifStatement = 22, RULE_ternaryStatement = 23, 
@@ -38,8 +38,8 @@ public class NewtonParser extends Parser {
 	public static final String[] ruleNames = {
 		"program", "programHeading", "constantDefinitionPart", "constantDefinition", 
 		"variableDefinitionPart", "variableDefinition", "mainStatement", "functionStatement", 
-		"tag", "baseType", "statement", "assignmentStatement", "multipleAssigmentStatement", 
-		"parallelAssigmentStatement", "callFunctionStatement", "parameterList", 
+		"tag", "baseType", "statement", "assignmentStatement", "multipleAssignmentStatement", 
+		"parallelAssignmentStatement", "callFunctionStatement", "parameterList", 
 		"loopStatement", "whileStatement", "forStatement", "doWhileStatement", 
 		"conditionalStatement", "caseStatement", "ifStatement", "ternaryStatement", 
 		"expression", "simpleExpression", "term", "factor", "simpleFactor"
@@ -769,8 +769,8 @@ public class NewtonParser extends Parser {
 		public AssignmentStatementContext assignmentStatement() {
 			return getRuleContext(AssignmentStatementContext.class,0);
 		}
-		public ParallelAssigmentStatementContext parallelAssigmentStatement() {
-			return getRuleContext(ParallelAssigmentStatementContext.class,0);
+		public ParallelAssignmentStatementContext parallelAssignmentStatement() {
+			return getRuleContext(ParallelAssignmentStatementContext.class,0);
 		}
 		public CallFunctionStatementContext callFunctionStatement() {
 			return getRuleContext(CallFunctionStatementContext.class,0);
@@ -818,7 +818,7 @@ public class NewtonParser extends Parser {
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(165);
-				parallelAssigmentStatement();
+				parallelAssignmentStatement();
 				}
 				break;
 			case 5:
@@ -851,11 +851,11 @@ public class NewtonParser extends Parser {
 		public TernaryStatementContext ternaryStatement() {
 			return getRuleContext(TernaryStatementContext.class,0);
 		}
-		public List<MultipleAssigmentStatementContext> multipleAssigmentStatement() {
-			return getRuleContexts(MultipleAssigmentStatementContext.class);
+		public List<MultipleAssignmentStatementContext> multipleAssignmentStatement() {
+			return getRuleContexts(MultipleAssignmentStatementContext.class);
 		}
-		public MultipleAssigmentStatementContext multipleAssigmentStatement(int i) {
-			return getRuleContext(MultipleAssigmentStatementContext.class,i);
+		public MultipleAssignmentStatementContext multipleAssignmentStatement(int i) {
+			return getRuleContext(MultipleAssignmentStatementContext.class,i);
 		}
 		public AssignmentStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -887,7 +887,7 @@ public class NewtonParser extends Parser {
 					{
 					{
 					setState(171);
-					multipleAssigmentStatement();
+					multipleAssignmentStatement();
 					}
 					} 
 				}
@@ -926,23 +926,23 @@ public class NewtonParser extends Parser {
 		return _localctx;
 	}
 
-	public static class MultipleAssigmentStatementContext extends ParserRuleContext {
+	public static class MultipleAssignmentStatementContext extends ParserRuleContext {
 		public TerminalNode Identifier() { return getToken(NewtonParser.Identifier, 0); }
 		public TerminalNode Assign() { return getToken(NewtonParser.Assign, 0); }
-		public MultipleAssigmentStatementContext(ParserRuleContext parent, int invokingState) {
+		public MultipleAssignmentStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_multipleAssigmentStatement; }
+		@Override public int getRuleIndex() { return RULE_multipleAssignmentStatement; }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof NewtonVisitor ) return ((NewtonVisitor<? extends T>)visitor).visitMultipleAssigmentStatement(this);
+			if ( visitor instanceof NewtonVisitor ) return ((NewtonVisitor<? extends T>)visitor).visitMultipleAssignmentStatement(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final MultipleAssigmentStatementContext multipleAssigmentStatement() throws RecognitionException {
-		MultipleAssigmentStatementContext _localctx = new MultipleAssigmentStatementContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_multipleAssigmentStatement);
+	public final MultipleAssignmentStatementContext multipleAssignmentStatement() throws RecognitionException {
+		MultipleAssignmentStatementContext _localctx = new MultipleAssignmentStatementContext(_ctx, getState());
+		enterRule(_localctx, 24, RULE_multipleAssignmentStatement);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -963,7 +963,7 @@ public class NewtonParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ParallelAssigmentStatementContext extends ParserRuleContext {
+	public static class ParallelAssignmentStatementContext extends ParserRuleContext {
 		public List<TerminalNode> CurlyBracketLeft() { return getTokens(NewtonParser.CurlyBracketLeft); }
 		public TerminalNode CurlyBracketLeft(int i) {
 			return getToken(NewtonParser.CurlyBracketLeft, i);
@@ -984,20 +984,20 @@ public class NewtonParser extends Parser {
 			return getRuleContext(SimpleFactorContext.class,i);
 		}
 		public TerminalNode Semi() { return getToken(NewtonParser.Semi, 0); }
-		public ParallelAssigmentStatementContext(ParserRuleContext parent, int invokingState) {
+		public ParallelAssignmentStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_parallelAssigmentStatement; }
+		@Override public int getRuleIndex() { return RULE_parallelAssignmentStatement; }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof NewtonVisitor ) return ((NewtonVisitor<? extends T>)visitor).visitParallelAssigmentStatement(this);
+			if ( visitor instanceof NewtonVisitor ) return ((NewtonVisitor<? extends T>)visitor).visitParallelAssignmentStatement(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ParallelAssigmentStatementContext parallelAssigmentStatement() throws RecognitionException {
-		ParallelAssigmentStatementContext _localctx = new ParallelAssigmentStatementContext(_ctx, getState());
-		enterRule(_localctx, 26, RULE_parallelAssigmentStatement);
+	public final ParallelAssignmentStatementContext parallelAssignmentStatement() throws RecognitionException {
+		ParallelAssignmentStatementContext _localctx = new ParallelAssignmentStatementContext(_ctx, getState());
+		enterRule(_localctx, 26, RULE_parallelAssignmentStatement);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
