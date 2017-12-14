@@ -177,4 +177,10 @@ public interface NewtonVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFactor(NewtonParser.FactorContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link NewtonParser#simpleFactor}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSimpleFactor(NewtonParser.SimpleFactorContext ctx);
 }

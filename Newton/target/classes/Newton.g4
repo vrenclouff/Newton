@@ -48,7 +48,7 @@ multipleAssigmentStatement
     : Identifier Assign;
 
 parallelAssigmentStatement
-    : CurlyBracketLeft Identifier (',' Identifier)* CurlyBracketRight Assign CurlyBracketLeft expression (',' expression)* CurlyBracketRight Semi;
+    : CurlyBracketLeft Identifier (',' Identifier)* CurlyBracketRight Assign CurlyBracketLeft simpleFactor (',' simpleFactor)* CurlyBracketRight Semi;
 
 callFunctionStatement
     : (Identifier Assign)? Identifier RoundBracketLeft parameterList? RoundBracketRight Semi;
@@ -95,9 +95,12 @@ term
     | RoundBracketLeft simpleExpression RoundBracketRight ((Add | Sub | Mul | Div) simpleExpression)?;
 
 factor
-    : Int
-    | Boolean
+    : simpleFactor
     | Identifier;
+
+simpleFactor
+    : Int
+    | Boolean;
 
 
 EndBlock : 'end';

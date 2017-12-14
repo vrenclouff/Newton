@@ -1,23 +1,39 @@
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import org.antlr.v4.runtime.tree.TerminalNode;
+
+import java.util.*;
 
 
 public class MainVisitor extends NewtonBaseVisitor<Void> {
 
+    /*
+     * Aktivacni zaznam
+     *      dynamicka baze
+     *      staticka baze
+     *      pozice navratove instrukce
+     */
+    private final int ACTIVATE_RECORD_SIZE = 3;
+
+    /* List instrukci */
     private final List<Instruction> INSTRUCTIONS = new LinkedList<>();
 
+    /* List funkci */
     private final List<FunctionDefinition> FUNCTIONS = new LinkedList<>();
 
+    /* Definice vsech promenych */
     private final Map<String, Variable> VARIABLES = new HashMap<>();
 
+    /* Definice vsech konstant */
     private final Map<String, Variable> CONSTANTS = new HashMap<>();
 
+    /* Hlasky pri preklady (ERROR, WARNING, atd..) */
     private final List<String> MESSAGES = new LinkedList<>();
 
-    private int stackSize = 2;  // Aktivacni zaznam, vyresit lip
+    /* Vrchol zasobniku (citac hodnot na zasobniku) */
+    private int topStack = -1;
+
+    /* Aktualni uroven zanoreni */
+    private int level = 0;
 
     public List<Instruction> getInstructions() {
         return INSTRUCTIONS;
@@ -31,28 +47,70 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         return VARIABLES.containsKey(name) || CONSTANTS.containsKey(name);
     }
 
+    private Variable getVariable(String variableName) {
+        if (CONSTANTS.containsKey(variableName)) {
+            return CONSTANTS.get(variableName);
+        }else if (VARIABLES.containsKey(variableName)) {
+            return VARIABLES.get(variableName);
+        }else {
+            return null;
+        }
+    }
+
     @Override
     public Void visitProgram(NewtonParser.ProgramContext ctx) {
 
         // vygenerovani opakujicich se kusu bloku, atd
 
-        return super.visitProgram(ctx);
+        Void result = super.visitProgram(ctx);
+
+        INSTRUCTIONS.add(new Instruction(InstructionType.RET, 0, 0));
+
+        return result;
     }
 
     @Override
     public Void visitMainStatement(NewtonParser.MainStatementContext ctx) {
-        if (!ctx.statement().isEmpty()) {
-            // skoc na prvni instrukci v mainu
-            INSTRUCTIONS.add(0, new Instruction(InstructionType.INT, 3));   // Pro aktivacni zaznam
-            INSTRUCTIONS.add(1, new Instruction(InstructionType.CAL, INSTRUCTIONS.size() + 1));
-        } else {
-            // pokud je main prazdny, vytvori se pouze instrukce pro promene a konstanty
-            INSTRUCTIONS.add(0, new Instruction(InstructionType.JMP, 1));
-            INSTRUCTIONS.add(1, new Instruction(InstructionType.INT, 3));   // Pro aktivacni zaznam
+
+        if (ctx.statement().isEmpty()) {
+            // WARNING program nema co vykonavat
+            return null;
         }
 
+        int offset = CONSTANTS.size() * 2; // pocet instrukci pro vytvoreni konstant
+        int position;
+
+        if (offset != 0) {
+            // skot na instrukce pro vytvoreni konstant
+            INSTRUCTIONS.add(0, new Instruction(InstructionType.JMP, 1));
+            offset += 2; // nove pridana JMP + za aktualne posledni instrukci
+            position = INSTRUCTIONS.size() + 1;
+        } else {
+            position = INSTRUCTIONS.size();
+        }
+
+        // skoc na prvni instrukci v mainu
+        INSTRUCTIONS.add(offset, new Instruction(InstructionType.JMP, position));
 
         return super.visitMainStatement(ctx);
+    }
+
+    @Override
+    public Void visitProgramHeading(NewtonParser.ProgramHeadingContext ctx) {
+
+        // pro aktivacni zaznam
+        int spaceAtStack = ACTIVATE_RECORD_SIZE;
+
+        // misto pro promene a konstanty
+        spaceAtStack += ctx.constantDefinitionPart().constantDefinition().size()
+                          + ctx.variableDefinitionPart().variableDefinition().size();
+
+        // promene a konstanty maji bazi 0
+        INSTRUCTIONS.add(new Instruction(InstructionType.INT, spaceAtStack));
+
+        topStack = spaceAtStack;
+
+        return super.visitProgramHeading(ctx);
     }
 
     @Override
@@ -64,9 +122,10 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
             MESSAGES.add(MessageUtil.create(MessageType.VARIABLE_IS_DECLARED, ctx)); return null;
         }
 
-        INSTRUCTIONS.add(new Instruction(InstructionType.INT, 1));
-        stackSize++;
-        VARIABLES.put(variableName, new Variable(variableName, DataType.valueOf(type.toUpperCase()), stackSize));
+        int position = VARIABLES.size() + CONSTANTS.size() + ACTIVATE_RECORD_SIZE;
+        Variable variable = new Variable(variableName, DataType.valueOf(type.toUpperCase()), position);
+
+        VARIABLES.put(variableName, variable);
 
         return super.visitVariableDefinition(ctx);
     }
@@ -81,31 +140,30 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         }
 
         Variable variable = null;
+        int position = CONSTANTS.size() + ACTIVATE_RECORD_SIZE;
         String value = null;
-
-        INSTRUCTIONS.add(new Instruction(InstructionType.INT, 1));
-        stackSize++;
 
         if (ctx.IntType() != null) {
             value = ctx.Int().getText();
-            variable = new Variable(variableName, DataType.INT, stackSize);
+            variable = new Variable(variableName, DataType.INT, position);
         } else if (ctx.BoolType() != null) {
-            value = ctx.Boolean().getText();
-            variable = new Variable(variableName, DataType.BOOL, stackSize);
+            value = ctx.Boolean().getText().equals("true") ? "1" : "0";
+            variable = new Variable(variableName, DataType.BOOL, position);
         }
+
+        CONSTANTS.put(variableName, variable);
+
+        Void result = super.visitConstantDefinition(ctx);
 
         INSTRUCTIONS.add(new Instruction(InstructionType.LIT, value));
         INSTRUCTIONS.add(new Instruction(InstructionType.STO, variable.getStackPosition()));
 
-        VARIABLES.put(variableName, variable);
-
-        return super.visitConstantDefinition(ctx);
+        return result;
     }
 
     @Override
     public Void visitAssignmentStatement(NewtonParser.AssignmentStatementContext ctx) {
         String variableName = ctx.Identifier().getText();
-        String value = ctx.expression().getText();
 
         if (CONSTANTS.containsKey(variableName)) {
             MESSAGES.add(MessageUtil.create(MessageType.CONSTANT_INITIALIZE, ctx)); return null;
@@ -117,21 +175,79 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
             MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx)); return null;
         }
 
-        if (variable.getDataType().equals(DataType.BOOL)) {
-            if (value.equals("true")) {
-                value = "1";
-            } else if (value.equals("false")) {
-                value = "0";
-            } else {
-                MESSAGES.add(MessageUtil.create(MessageType.WRONG_INITIALIZE, ctx)); return null;
-            }
+        Void result = super.visitAssignmentStatement(ctx);
+
+        INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
+
+        return result;
+    }
+
+    @Override
+    public Void visitTerm(NewtonParser.TermContext ctx) {
+
+        if (ctx.factor().isEmpty()) {
+            // zavorky
+            return null;
         }
 
-        INSTRUCTIONS.add(new Instruction(InstructionType.LIT, value));
-        stackSize++;
 
-        INSTRUCTIONS.add(new Instruction(InstructionType.STO, variable.getStackPosition()));
+        if (ctx.factor().size() > 1){
 
-        return super.visitAssignmentStatement(ctx);
+            List<TerminalNode> muls = ctx.Mul();
+            List<TerminalNode> divs = ctx.Div();
+
+            List<NewtonParser.FactorContext> factors = ctx.factor();
+
+            NewtonParser.FactorContext beforeFactor = factors.get(0);
+            visit(beforeFactor);
+
+            for (int mul = 0, div = 0, factor = 1; mul < muls.size() || div < divs.size(); factor++) {
+
+                NewtonParser.FactorContext actualFactor = factors.get(factor);
+                TerminalNode actualMul = muls.size() > mul ? muls.get(mul) : null;
+                TerminalNode actualDiv = divs.size() > div ?  divs.get(div) : null;
+
+                TerminalNode actualOperator = actualMul == null && actualDiv != null ? actualDiv : actualMul != null && actualDiv == null ? actualMul : null;
+                actualOperator = actualOperator != null ? actualOperator : actualMul.getSourceInterval().a < actualDiv.getSourceInterval().a ? actualMul : actualDiv;
+
+                visit(actualFactor);
+
+                if (actualOperator.equals(actualMul)) {
+                    // proved instrukci nasobeni
+                    INSTRUCTIONS.add(new Instruction(OperationType.MUL, level));
+                    mul++;
+                } else {
+                    // proved instrukci deleni
+                    INSTRUCTIONS.add(new Instruction(OperationType.DIV, level));
+                    div++;
+                }
+
+            }
+            return null;
+        }
+
+        return super.visitTerm(ctx);
+    }
+
+    @Override
+    public Void visitFactor(NewtonParser.FactorContext ctx) {
+        if (ctx.Identifier() != null) {
+            Variable variable = getVariable(ctx.Identifier().getText());
+            if (variable == null) {
+                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx)); return null;
+            }
+            INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variable.getStackPosition()));
+        }
+        return super.visitFactor(ctx);
+    }
+
+    @Override
+    public Void visitSimpleFactor(NewtonParser.SimpleFactorContext ctx) {
+        if (ctx.Int() != null) {
+            INSTRUCTIONS.add(new Instruction(InstructionType.LIT, level, ctx.Int().getText()));
+        } else if (ctx.Boolean() != null) {
+            INSTRUCTIONS.add(new Instruction(InstructionType.LIT, level,  ctx.Boolean().getText().equals("true") ? 1 : 0));
+        }
+        return super.visitSimpleFactor(ctx);
     }
 }

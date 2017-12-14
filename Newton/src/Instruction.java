@@ -13,6 +13,10 @@ public class Instruction {
         this.value = value;
     }
 
+    public Instruction(OperationType operationType, int level) {
+        this(InstructionType.OPR, level, operationType.ordinal() + 1);
+    }
+
     public Instruction(InstructionType type, int level, int value) {
         this(type, level, String.valueOf(value));
     }
