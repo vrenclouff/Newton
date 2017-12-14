@@ -2,16 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b7945e7f-e7c5-4ddc-9374-2247228d2f0f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/OperationType.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/DataTypeFormatter.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/NewtonBaseVisitor.java" afterPath="$PROJECT_DIR$/gen/NewtonBaseVisitor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/NewtonParser.java" afterPath="$PROJECT_DIR$/gen/NewtonParser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/NewtonVisitor.java" afterPath="$PROJECT_DIR$/gen/NewtonVisitor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Instruction.java" afterPath="$PROJECT_DIR$/src/Instruction.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/MainVisitor.java" afterPath="$PROJECT_DIR$/src/MainVisitor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/MessageType.java" afterPath="$PROJECT_DIR$/src/MessageType.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Newton.g4" afterPath="$PROJECT_DIR$/src/Newton.g4" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/Newton.g4" afterPath="$PROJECT_DIR$/target/classes/Newton.g4" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testSimpleInput.txt" afterPath="$PROJECT_DIR$/testSimpleInput.txt" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -31,8 +22,8 @@
       <file leaf-file-name="Newton.g4" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Newton.g4">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="99" column="0" lean-forward="true" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
+            <state relative-caret-position="144">
+              <caret line="47" column="24" lean-forward="true" selection-start-line="47" selection-start-column="24" selection-end-line="47" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -41,8 +32,8 @@
       <file leaf-file-name="MainVisitor.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/MainVisitor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-62">
-              <caret line="188" column="22" lean-forward="true" selection-start-line="188" selection-start-column="22" selection-end-line="188" selection-end-column="22" />
+            <state relative-caret-position="-547">
+              <caret line="23" column="63" lean-forward="false" selection-start-line="23" selection-start-column="63" selection-end-line="23" selection-end-column="63" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -53,8 +44,8 @@
       <file leaf-file-name="testSimpleInput.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/testSimpleInput.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="9" lean-forward="true" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
+            <state relative-caret-position="105">
+              <caret line="7" column="4" lean-forward="true" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -72,10 +63,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>BeginBlock</find>
-      <find>MainFnc</find>
-      <find>BeginFunction</find>
-      <find>simpleExpressionsimpleExpression</find>
       <find>':'</find>
       <find>BeginProgram</find>
       <find>EndBlock</find>
@@ -102,6 +89,10 @@
       <find>LIT</find>
       <find>&quot;true&quot;</find>
       <find>int</find>
+      <find>beforeFactor</find>
+      <find>actualFactor</find>
+      <find>terna</find>
+      <find>assignmentStatement</find>
     </findStrings>
     <replaceStrings>
       <replace>Expression</replace>
@@ -385,12 +376,12 @@
       <workItem from="1512418844600" duration="2457000" />
       <workItem from="1512641945716" duration="7237000" />
       <workItem from="1513096443332" duration="3399000" />
-      <workItem from="1513114128084" duration="24555000" />
+      <workItem from="1513114128084" duration="26286000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="97110000" />
+    <option name="totallyTimeSpent" value="98841000" />
   </component>
   <component name="TodoView" selected-index="1">
     <todo-panel id="selected-file">
@@ -424,7 +415,7 @@
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21864952" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21864952" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32967034" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1929182" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -775,26 +766,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/testSimpleInput.txt">
+    <entry file="file://$PROJECT_DIR$/src/Newton.g4">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="9" lean-forward="true" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="9" />
+        <state relative-caret-position="144">
+          <caret line="47" column="24" lean-forward="true" selection-start-line="47" selection-start-column="24" selection-end-line="47" selection-end-column="24" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Newton.g4">
+    <entry file="file://$PROJECT_DIR$/testSimpleInput.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="99" column="0" lean-forward="true" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
+        <state relative-caret-position="105">
+          <caret line="7" column="4" lean-forward="true" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/MainVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-62">
-          <caret line="188" column="22" lean-forward="true" selection-start-line="188" selection-start-column="22" selection-end-line="188" selection-end-column="22" />
+        <state relative-caret-position="-547">
+          <caret line="23" column="63" lean-forward="false" selection-start-line="23" selection-start-column="63" selection-end-line="23" selection-end-column="63" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

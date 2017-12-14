@@ -1,7 +1,8 @@
 constant:
 variable:
+    int a;
     int c;
 main()
-    c = 4 * 3 / 2;
+    a = c = 5;
 end
     

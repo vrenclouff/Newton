@@ -179,6 +179,20 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
 
         INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
 
+        ctx.multipleAssigmentStatement().forEach(e -> {
+
+            Variable var = VARIABLES.get(e.Identifier().getText());
+
+            if (var == null) {
+                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx)); return;
+            }
+
+            INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variable.getStackPosition()));
+            INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, var.getStackPosition()));
+
+        });
+
+
         return result;
     }
 
@@ -198,19 +212,17 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
 
             List<NewtonParser.FactorContext> factors = ctx.factor();
 
-            NewtonParser.FactorContext beforeFactor = factors.get(0);
-            visit(beforeFactor);
+            visit(factors.get(0));
 
             for (int mul = 0, div = 0, factor = 1; mul < muls.size() || div < divs.size(); factor++) {
 
-                NewtonParser.FactorContext actualFactor = factors.get(factor);
                 TerminalNode actualMul = muls.size() > mul ? muls.get(mul) : null;
                 TerminalNode actualDiv = divs.size() > div ?  divs.get(div) : null;
 
                 TerminalNode actualOperator = actualMul == null && actualDiv != null ? actualDiv : actualMul != null && actualDiv == null ? actualMul : null;
                 actualOperator = actualOperator != null ? actualOperator : actualMul.getSourceInterval().a < actualDiv.getSourceInterval().a ? actualMul : actualDiv;
 
-                visit(actualFactor);
+                visit(factors.get(factor));
 
                 if (actualOperator.equals(actualMul)) {
                     // proved instrukci nasobeni
