@@ -39,9 +39,14 @@ Colon=38
 Semi=39
 Ques=40
 RelationOp=41
-LogicalOp=42
-Identifier=43
-WS=44
+Lt=42
+Gt=43
+Lte=44
+Gte=45
+Eq=46
+LogicalOp=47
+Identifier=48
+WS=49
 'end'=1
 'main'=2
 'constant:'=3
@@ -80,3 +85,8 @@ WS=44
 ':'=38
 ';'=39
 '?'=40
+'<'=42
+'>'=43
+'<='=44
+'>='=45
+'=='=46

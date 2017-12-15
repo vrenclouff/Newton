@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 
 public class MainVisitor extends NewtonBaseVisitor<Void> {
@@ -60,13 +59,12 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         }
     }
 
-    private void generateInstructionForOperator(List neterminals,
-                                                List<TerminalNode> firstTerminals,
-                                                List<TerminalNode> secondTerminals,
-                                                Consumer<Boolean> result) {
+    private void visitIntOpr(List neterminals,
+                             List<TerminalNode> firstTerminals,
+                             List<TerminalNode> secondTerminals,
+                             Consumer<Integer> result) {
 
         visit((ParseTree) neterminals.get(0));
-
         for (int first = 0, second = 0, factor = 1; first < firstTerminals.size() || second < secondTerminals.size(); factor++) {
 
             TerminalNode actualFirst = firstTerminals.size() > first ? firstTerminals.get(first) : null;
@@ -78,14 +76,21 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
             visit((ParseTree) neterminals.get(factor));
 
             if (actualOperator.equals(actualFirst)) {
-                result.accept(true);
+                result.accept(actualFirst.getSymbol().getType());
                 first++;
             } else {
-                result.accept(false);
+                result.accept(actualSecond.getSymbol().getType());
                 second++;
             }
         }
+    }
 
+    private void visitStringOpr(List neterminals, List<TerminalNode> terminals, Consumer<String> result) {
+        visit((ParseTree) neterminals.get(0));
+        for (int opr = 0, exp = 1; exp < neterminals.size() || opr < terminals.size(); exp++, opr++) {
+            visit((ParseTree) neterminals.get(exp));
+            result.accept(terminals.get(opr).getSymbol().getText());
+        }
     }
 
     @Override
@@ -104,8 +109,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     public Void visitMainStatement(NewtonParser.MainStatementContext ctx) {
 
         if (ctx.statement().isEmpty()) {
-            // WARNING program nema co vykonavat
-            return null;
+            MESSAGES.add(MessageUtil.create(MessageType.EMPTY_MAIN, ctx)); return null;
         }
 
         int offset = CONSTANTS.size() * 2; // pocet instrukci pro vytvoreni konstant
@@ -250,14 +254,47 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     }
 
     @Override
+    public Void visitExpression(NewtonParser.ExpressionContext ctx) {
+
+//        if (!ctx.expression().isEmpty()) {
+//            visitStringOpr(ctx.expression(), ctx.LogicalOp(), res -> {
+//                if (res.equals("&&")) {
+//                    // TODO instrukce pro AND
+//                } else if (res.equals("||")) {
+//                    // TODO instrukce OR
+//                }
+//            });
+//            return null;
+//        }
+
+        if (ctx.simpleExpression().size() > 1) {
+            visitStringOpr(ctx.simpleExpression(), ctx.RelationOp(), res -> {
+                if (res.equals("<")) {
+                    INSTRUCTIONS.add(new Instruction(OperationType.LT, level));
+                }else if (res.equals("<=")) {
+                    INSTRUCTIONS.add(new Instruction(OperationType.LTE, level));
+                }else if (res.equals(">")) {
+                    INSTRUCTIONS.add(new Instruction(OperationType.GT, level));
+                }else if (res.equals(">=")) {
+                    INSTRUCTIONS.add(new Instruction(OperationType.GTE, level));
+                }else if (res.equals("==")) {
+                    INSTRUCTIONS.add(new Instruction(OperationType.EQ, level));
+                }
+            });
+            return null;
+        }
+
+        return super.visitExpression(ctx);
+    }
+
+    @Override
     public Void visitSimpleExpression(NewtonParser.SimpleExpressionContext ctx) {
 
         if (ctx.term().size() > 1) {
-            generateInstructionForOperator(ctx.term(), ctx.Add(), ctx.Sub(), res -> {
-                if (res) {
-                    INSTRUCTIONS.add(new Instruction(OperationType.ADD, level));
-                }else {
-                    INSTRUCTIONS.add(new Instruction(OperationType.DIV, level));
+            visitIntOpr(ctx.term(), ctx.Add(), ctx.Sub(), res -> {
+                switch (res) {
+                    case NewtonParser.Add: INSTRUCTIONS.add(new Instruction(OperationType.ADD, level)); break;
+                    case NewtonParser.Sub: INSTRUCTIONS.add(new Instruction(OperationType.SUB, level)); break;
                 }
             });
             return null;
@@ -270,16 +307,15 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     public Void visitTerm(NewtonParser.TermContext ctx) {
 
         if (ctx.factor().isEmpty()) {
-            // zavorky
+            // TODO zavorky
             return null;
         }
 
         if (ctx.factor().size() > 1){
-            generateInstructionForOperator(ctx.factor(), ctx.Mul(), ctx.Div(), res -> {
-                if (res) {
-                    INSTRUCTIONS.add(new Instruction(OperationType.MUL, level));
-                }else {
-                    INSTRUCTIONS.add(new Instruction(OperationType.DIV, level));
+            visitIntOpr(ctx.factor(), ctx.Mul(), ctx.Div(), res -> {
+                switch (res) {
+                    case NewtonParser.Mul: INSTRUCTIONS.add(new Instruction(OperationType.MUL, level)); break;
+                    case NewtonParser.Div: INSTRUCTIONS.add(new Instruction(OperationType.DIV, level)); break;
                 }
             });
             return null;

@@ -1,7 +1,7 @@
 constant:
 variable:
-    int a;
+    bool a;
 main()
-    a = 2 + 4 * 3;
+    a = 5 > 3;
 end
     
