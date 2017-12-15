@@ -1,7 +1,10 @@
 
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 
 public class MainVisitor extends NewtonBaseVisitor<Void> {
@@ -55,6 +58,34 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         }else {
             return null;
         }
+    }
+
+    private void generateInstructionForOperator(List neterminals,
+                                                List<TerminalNode> firstTerminals,
+                                                List<TerminalNode> secondTerminals,
+                                                Consumer<Boolean> result) {
+
+        visit((ParseTree) neterminals.get(0));
+
+        for (int first = 0, second = 0, factor = 1; first < firstTerminals.size() || second < secondTerminals.size(); factor++) {
+
+            TerminalNode actualFirst = firstTerminals.size() > first ? firstTerminals.get(first) : null;
+            TerminalNode actualSecond = secondTerminals.size() > second ?  secondTerminals.get(second) : null;
+
+            TerminalNode actualOperator = actualFirst == null && actualSecond != null ? actualSecond : actualFirst != null && actualSecond == null ? actualFirst : null;
+            actualOperator = actualOperator != null ? actualOperator : actualFirst.getSourceInterval().a < actualSecond.getSourceInterval().a ? actualFirst : actualSecond;
+
+            visit((ParseTree) neterminals.get(factor));
+
+            if (actualOperator.equals(actualFirst)) {
+                result.accept(true);
+                first++;
+            } else {
+                result.accept(false);
+                second++;
+            }
+        }
+
     }
 
     @Override
@@ -219,6 +250,23 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     }
 
     @Override
+    public Void visitSimpleExpression(NewtonParser.SimpleExpressionContext ctx) {
+
+        if (ctx.term().size() > 1) {
+            generateInstructionForOperator(ctx.term(), ctx.Add(), ctx.Sub(), res -> {
+                if (res) {
+                    INSTRUCTIONS.add(new Instruction(OperationType.ADD, level));
+                }else {
+                    INSTRUCTIONS.add(new Instruction(OperationType.DIV, level));
+                }
+            });
+            return null;
+        }
+
+        return super.visitSimpleExpression(ctx);
+    }
+
+    @Override
     public Void visitTerm(NewtonParser.TermContext ctx) {
 
         if (ctx.factor().isEmpty()) {
@@ -226,37 +274,14 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
             return null;
         }
 
-
         if (ctx.factor().size() > 1){
-
-            List<TerminalNode> muls = ctx.Mul();
-            List<TerminalNode> divs = ctx.Div();
-
-            List<NewtonParser.FactorContext> factors = ctx.factor();
-
-            visit(factors.get(0));
-
-            for (int mul = 0, div = 0, factor = 1; mul < muls.size() || div < divs.size(); factor++) {
-
-                TerminalNode actualMul = muls.size() > mul ? muls.get(mul) : null;
-                TerminalNode actualDiv = divs.size() > div ?  divs.get(div) : null;
-
-                TerminalNode actualOperator = actualMul == null && actualDiv != null ? actualDiv : actualMul != null && actualDiv == null ? actualMul : null;
-                actualOperator = actualOperator != null ? actualOperator : actualMul.getSourceInterval().a < actualDiv.getSourceInterval().a ? actualMul : actualDiv;
-
-                visit(factors.get(factor));
-
-                if (actualOperator.equals(actualMul)) {
-                    // proved instrukci nasobeni
+            generateInstructionForOperator(ctx.factor(), ctx.Mul(), ctx.Div(), res -> {
+                if (res) {
                     INSTRUCTIONS.add(new Instruction(OperationType.MUL, level));
-                    mul++;
-                } else {
-                    // proved instrukci deleni
+                }else {
                     INSTRUCTIONS.add(new Instruction(OperationType.DIV, level));
-                    div++;
                 }
-
-            }
+            });
             return null;
         }
 

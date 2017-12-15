@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b7945e7f-e7c5-4ddc-9374-2247228d2f0f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/NewtonBaseVisitor.java" afterPath="$PROJECT_DIR$/gen/NewtonBaseVisitor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/NewtonParser.java" afterPath="$PROJECT_DIR$/gen/NewtonParser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gen/NewtonVisitor.java" afterPath="$PROJECT_DIR$/gen/NewtonVisitor.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/MainVisitor.java" afterPath="$PROJECT_DIR$/src/MainVisitor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/MessageType.java" afterPath="$PROJECT_DIR$/src/MessageType.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Newton.g4" afterPath="$PROJECT_DIR$/src/Newton.g4" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testSimpleInput.txt" afterPath="$PROJECT_DIR$/testSimpleInput.txt" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -27,8 +22,8 @@
       <file leaf-file-name="Newton.g4" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Newton.g4">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="53" column="70" lean-forward="false" selection-start-line="53" selection-start-column="70" selection-end-line="53" selection-end-column="70" />
+            <state relative-caret-position="399">
+              <caret line="90" column="10" lean-forward="false" selection-start-line="90" selection-start-column="6" selection-end-line="90" selection-end-column="10" />
               <folding />
             </state>
           </provider>
@@ -37,8 +32,8 @@
       <file leaf-file-name="MainVisitor.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/MainVisitor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="411">
-              <caret line="187" column="57" lean-forward="true" selection-start-line="187" selection-start-column="57" selection-end-line="187" selection-end-column="57" />
+            <state relative-caret-position="384">
+              <caret line="272" column="22" lean-forward="true" selection-start-line="272" selection-start-column="22" selection-end-line="272" selection-end-column="22" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -46,11 +41,21 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="NewtonParser.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gen/NewtonParser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="737">
+              <caret line="1931" column="54" lean-forward="false" selection-start-line="1931" selection-start-column="54" selection-end-line="1931" selection-end-column="54" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="testSimpleInput.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/testSimpleInput.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+            <state relative-caret-position="90">
+              <caret line="6" column="4" lean-forward="true" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -141,8 +146,8 @@
         <option value="$PROJECT_DIR$/src/OperationType.java" />
         <option value="$PROJECT_DIR$/src/Newton.g4" />
         <option value="$PROJECT_DIR$/src/MessageType.java" />
-        <option value="$PROJECT_DIR$/src/MainVisitor.java" />
         <option value="$PROJECT_DIR$/testSimpleInput.txt" />
+        <option value="$PROJECT_DIR$/src/MainVisitor.java" />
       </list>
     </option>
   </component>
@@ -382,12 +387,12 @@
       <workItem from="1512418844600" duration="2457000" />
       <workItem from="1512641945716" duration="7237000" />
       <workItem from="1513096443332" duration="3399000" />
-      <workItem from="1513114128084" duration="27008000" />
+      <workItem from="1513114128084" duration="35178000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="99563000" />
+    <option name="totallyTimeSpent" value="107733000" />
   </component>
   <component name="TodoView" selected-index="1">
     <todo-panel id="selected-file">
@@ -421,7 +426,7 @@
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21864952" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2915327" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32967034" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1929182" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -453,13 +458,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/Newton_old.g4">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Newton_old.g4">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -654,13 +652,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gen/NewtonParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="302">
-          <caret line="415" column="75" lean-forward="false" selection-start-line="415" selection-start-column="58" selection-end-line="415" selection-end-column="75" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Message.java" />
     <entry file="file://$PROJECT_DIR$/src/Newton_old.g4">
       <provider selected="true" editor-type-id="text-editor">
@@ -774,24 +765,40 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Newton.g4">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="53" column="70" lean-forward="false" selection-start-line="53" selection-start-column="70" selection-end-line="53" selection-end-column="70" />
+        <state relative-caret-position="399">
+          <caret line="90" column="10" lean-forward="false" selection-start-line="90" selection-start-column="6" selection-end-line="90" selection-end-column="10" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/testSimpleInput.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="20" lean-forward="false" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+        <state relative-caret-position="90">
+          <caret line="6" column="4" lean-forward="true" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/antlr-4.7-complete.jar!/org/antlr/v4/runtime/ParserRuleContext.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="19" column="50" lean-forward="false" selection-start-line="19" selection-start-column="39" selection-end-line="19" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/NewtonParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="737">
+          <caret line="1931" column="54" lean-forward="false" selection-start-line="1931" selection-start-column="54" selection-end-line="1931" selection-end-column="54" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/MainVisitor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="411">
-          <caret line="187" column="57" lean-forward="true" selection-start-line="187" selection-start-column="57" selection-end-line="187" selection-end-column="57" />
+        <state relative-caret-position="384">
+          <caret line="272" column="22" lean-forward="true" selection-start-line="272" selection-start-column="22" selection-end-line="272" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
