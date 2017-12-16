@@ -358,14 +358,27 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
 
     @Override
     public Void visitIfStatement(NewtonParser.IfStatementContext ctx) {
-        visit(ctx.expression());
+        visit(ctx.expression()); // generuj instrukce pro podminku
 
         int position = INSTRUCTIONS.size();
 
-        ctx.statement().forEach(this::visit); // TODO: iterovat pouze do doby, nez narazim na else
+        ctx.statement().forEach(this::visit);
 
-        int condJump = INSTRUCTIONS.size() + 1;
-        INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, level, condJump));
+        if (ctx.elseStatement() != null) {
+            // podmineny skok, pokud existuje else vetev skoc na ni
+            INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, level, INSTRUCTIONS.size() + 2));
+
+            position = INSTRUCTIONS.size();
+
+            // zpracuj else vetev
+            visit(ctx.elseStatement());
+
+            // zpracuje true vetev a po skonceni skoc preskoc else vetev
+            INSTRUCTIONS.add(position, new Instruction(InstructionType.JMP, level, INSTRUCTIONS.size() + 1));
+        } else {
+            // pokud neexistuje else vetev skoc za podminku
+            INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, level, INSTRUCTIONS.size() + 1));
+        }
 
         return null;
     }

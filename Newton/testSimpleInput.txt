@@ -1,14 +1,18 @@
 constant:
 variable:
-    bool a;
+    bool res;
+    int a;
     int d;
 main()
     a = 4;
     d = a + 3;
-    while a < d do
-        a = 300;
-        d = a;
-    endwhile
-    a = 1000;
+    if a > d then
+        a = 50;
+        res = true;
+    else
+        res = false;
+        a = 80;
+    endif
+    a = 100;
 end
     

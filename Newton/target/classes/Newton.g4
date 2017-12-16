@@ -78,7 +78,10 @@ caseStatement
     : BeginSwitch simpleExpression Of (Int Colon statement)+ DefaultSwitch Colon + statement EndSwitch;
 
 ifStatement
-    : BeginIf expression Then statement* (Else statement*)? EndIf;
+    : BeginIf expression Then statement* elseStatement? EndIf;
+
+elseStatement
+    : Else statement*;
 
 ternaryStatement
     : expression Ques expression Colon expression;
