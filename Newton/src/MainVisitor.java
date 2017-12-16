@@ -362,7 +362,25 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
 
         int position = INSTRUCTIONS.size();
 
+        ctx.statement().forEach(this::visit); // TODO: iterovat pouze do doby, nez narazim na else
+
+        int condJump = INSTRUCTIONS.size() + 1;
+        INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, level, condJump));
+
+        return null;
+    }
+
+    @Override
+    public Void visitWhileStatement(NewtonParser.WhileStatementContext ctx) {
+        int iterationJump = INSTRUCTIONS.size();
+
+        visit(ctx.expression());
+
+        int position  = INSTRUCTIONS.size();
+
         ctx.statement().forEach(this::visit);
+
+        INSTRUCTIONS.add(new Instruction(InstructionType.JMP, level, iterationJump));
 
         int condJump = INSTRUCTIONS.size() + 1;
         INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, level, condJump));

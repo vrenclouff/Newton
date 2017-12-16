@@ -5,10 +5,10 @@ variable:
 main()
     a = 4;
     d = a + 3;
-    if a < d then
+    while a < d do
         a = 300;
         d = a;
-    endif
+    endwhile
     a = 1000;
 end
     
