@@ -1,7 +1,14 @@
 constant:
 variable:
     bool a;
+    int d;
 main()
-    a = 5 > 3;
+    a = 4;
+    d = a + 3;
+    if a < d then
+        a = 300;
+        d = a;
+    endif
+    a = 1000;
 end
     

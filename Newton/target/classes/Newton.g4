@@ -78,7 +78,7 @@ caseStatement
     : BeginSwitch simpleExpression Of (Int Colon statement)+ DefaultSwitch Colon + statement EndSwitch;
 
 ifStatement
-    : BeginIf expression Then statement (Else statement*)? EndIf;
+    : BeginIf expression Then statement* (Else statement*)? EndIf;
 
 ternaryStatement
     : expression Ques expression Colon expression;
@@ -144,11 +144,11 @@ Colon : ':';
 Semi : ';';
 Ques : '?';
 RelationOp : '<' | '>' | '<=' | '>=' | '==';
-//Lt : '<';
-//Gt : '>';
-//Lte: '<=';
-//Gte: '>=';
-//Eq: '==';
+Lt : '<';
+Gt : '>';
+Lte: '<=';
+Gte: '>=';
+Eq: '==';
 LogicalOp : '&&' | '||';
 Identifier: [a-zA-Z]+[a-zA-Z0-9]*;
 WS :  [ \t\r\n]+ -> skip;

@@ -14,7 +14,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
      *      staticka baze
      *      pozice navratove instrukce
      */
-    private final int ACTIVATE_RECORD_SIZE = 3;
+    private final int ACTIVATION_RECORD_SIZE = 3;
 
     /* List instrukci */
     private final List<Instruction> INSTRUCTIONS = new LinkedList<>();
@@ -22,7 +22,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     /* List funkci */
     private final List<FunctionDefinition> FUNCTIONS = new LinkedList<>();
 
-    /* Definice vsech promenych */
+    /* Definice vsech promennych */
     private final Map<String, Variable> VARIABLES = new HashMap<>();
 
     /* Definice vsech konstant */
@@ -52,28 +52,28 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     private Variable getVariable(String variableName) {
         if (CONSTANTS.containsKey(variableName)) {
             return CONSTANTS.get(variableName);
-        }else if (VARIABLES.containsKey(variableName)) {
+        } else if (VARIABLES.containsKey(variableName)) {
             return VARIABLES.get(variableName);
-        }else {
+        } else {
             return null;
         }
     }
 
-    private void visitIntOpr(List neterminals,
+    private void visitIntOpr(List nonterminals,
                              List<TerminalNode> firstTerminals,
                              List<TerminalNode> secondTerminals,
                              Consumer<Integer> result) {
 
-        visit((ParseTree) neterminals.get(0));
+        visit((ParseTree) nonterminals.get(0));
         for (int first = 0, second = 0, factor = 1; first < firstTerminals.size() || second < secondTerminals.size(); factor++) {
 
             TerminalNode actualFirst = firstTerminals.size() > first ? firstTerminals.get(first) : null;
-            TerminalNode actualSecond = secondTerminals.size() > second ?  secondTerminals.get(second) : null;
+            TerminalNode actualSecond = secondTerminals.size() > second ? secondTerminals.get(second) : null;
 
             TerminalNode actualOperator = actualFirst == null && actualSecond != null ? actualSecond : actualFirst != null && actualSecond == null ? actualFirst : null;
             actualOperator = actualOperator != null ? actualOperator : actualFirst.getSourceInterval().a < actualSecond.getSourceInterval().a ? actualFirst : actualSecond;
 
-            visit((ParseTree) neterminals.get(factor));
+            visit((ParseTree) nonterminals.get(factor));
 
             if (actualOperator.equals(actualFirst)) {
                 result.accept(actualFirst.getSymbol().getType());
@@ -85,10 +85,10 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         }
     }
 
-    private void visitStringOpr(List neterminals, List<TerminalNode> terminals, Consumer<String> result) {
-        visit((ParseTree) neterminals.get(0));
-        for (int opr = 0, exp = 1; exp < neterminals.size() || opr < terminals.size(); exp++, opr++) {
-            visit((ParseTree) neterminals.get(exp));
+    private void visitStringOpr(List nonterminals, List<TerminalNode> terminals, Consumer<String> result) {
+        visit((ParseTree) nonterminals.get(0));
+        for (int opr = 0, exp = 1; exp < nonterminals.size() || opr < terminals.size(); exp++, opr++) {
+            visit((ParseTree) nonterminals.get(exp));
             result.accept(terminals.get(opr).getSymbol().getText());
         }
     }
@@ -109,14 +109,15 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     public Void visitMainStatement(NewtonParser.MainStatementContext ctx) {
 
         if (ctx.statement().isEmpty()) {
-            MESSAGES.add(MessageUtil.create(MessageType.EMPTY_MAIN, ctx)); return null;
+            MESSAGES.add(MessageUtil.create(MessageType.EMPTY_MAIN, ctx));
+            return null;
         }
 
         int offset = CONSTANTS.size() * 2; // pocet instrukci pro vytvoreni konstant
         int position;
 
         if (offset != 0) {
-            // skot na instrukce pro vytvoreni konstant
+            // skok na instrukce pro vytvoreni konstant
             INSTRUCTIONS.add(0, new Instruction(InstructionType.JMP, 1));
             offset += 2; // nove pridana JMP + za aktualne posledni instrukci
             position = INSTRUCTIONS.size() + 1;
@@ -134,13 +135,13 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     public Void visitProgramHeading(NewtonParser.ProgramHeadingContext ctx) {
 
         // pro aktivacni zaznam
-        int spaceAtStack = ACTIVATE_RECORD_SIZE;
+        int spaceAtStack = ACTIVATION_RECORD_SIZE;
 
-        // misto pro promene a konstanty
+        // misto pro promenne a konstanty
         spaceAtStack += ctx.constantDefinitionPart().constantDefinition().size()
-                          + ctx.variableDefinitionPart().variableDefinition().size();
+                + ctx.variableDefinitionPart().variableDefinition().size();
 
-        // promene a konstanty maji bazi 0
+        // promenne a konstanty maji bazi 0
         INSTRUCTIONS.add(new Instruction(InstructionType.INT, spaceAtStack));
 
         topStack = spaceAtStack;
@@ -154,10 +155,11 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         String type = ctx.baseType().getText();
 
         if (isVariableDeclared(variableName)) {
-            MESSAGES.add(MessageUtil.create(MessageType.VARIABLE_IS_DECLARED, ctx)); return null;
+            MESSAGES.add(MessageUtil.create(MessageType.VARIABLE_IS_DECLARED, ctx));
+            return null;
         }
 
-        int position = VARIABLES.size() + CONSTANTS.size() + ACTIVATE_RECORD_SIZE;
+        int position = VARIABLES.size() + CONSTANTS.size() + ACTIVATION_RECORD_SIZE;
         Variable variable = new Variable(variableName, DataType.valueOf(type.toUpperCase()), position);
 
         VARIABLES.put(variableName, variable);
@@ -167,15 +169,14 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
 
     @Override
     public Void visitConstantDefinition(NewtonParser.ConstantDefinitionContext ctx) {
-
         String variableName = ctx.Identifier().getText();
-
         if (isVariableDeclared(variableName)) {
-            MESSAGES.add(MessageUtil.create(MessageType.CONSTANT_IS_DECLARED, ctx)); return null;
+            MESSAGES.add(MessageUtil.create(MessageType.CONSTANT_IS_DECLARED, ctx));
+            return null;
         }
 
         Variable variable = null;
-        int position = CONSTANTS.size() + ACTIVATE_RECORD_SIZE;
+        int position = CONSTANTS.size() + ACTIVATION_RECORD_SIZE;
         String value = null;
 
         if (ctx.IntType() != null) {
@@ -200,18 +201,20 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     public Void visitParallelAssignmentStatement(NewtonParser.ParallelAssignmentStatementContext ctx) {
 
         if (ctx.Identifier().size() != ctx.simpleFactor().size()) {
-            MESSAGES.add(MessageUtil.create(MessageType.PARALLEL_WRONG_OPERAND_SIZE, ctx)); return null;
+            MESSAGES.add(MessageUtil.create(MessageType.PARALLEL_WRONG_OPERAND_SIZE, ctx));
+            return null;
         }
 
-        for (int ind = 0; ind < ctx.Identifier().size(); ind++) {
+        for (int i = 0; i < ctx.Identifier().size(); i++) {
 
-            Variable variable = VARIABLES.get(ctx.Identifier().get(ind).getText());
+            Variable variable = VARIABLES.get(ctx.Identifier().get(i).getText());
 
             if (variable == null) {
-                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx)); return null;
+                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
+                return null;
             }
 
-            visit(ctx.simpleFactor().get(ind));
+            visit(ctx.simpleFactor().get(i));
             INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
         }
 
@@ -223,13 +226,15 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         String variableName = ctx.Identifier().getText();
 
         if (CONSTANTS.containsKey(variableName)) {
-            MESSAGES.add(MessageUtil.create(MessageType.CONSTANT_INITIALIZE, ctx)); return null;
+            MESSAGES.add(MessageUtil.create(MessageType.CONSTANT_INITIALIZE, ctx));
+            return null;
         }
 
         Variable variable = VARIABLES.get(variableName);
 
         if (variable == null) {
-            MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx)); return null;
+            MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
+            return null;
         }
 
         Void result = super.visitAssignmentStatement(ctx);
@@ -237,18 +242,15 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
 
         ctx.multipleAssignmentStatement().forEach(e -> {
-
             Variable var = VARIABLES.get(e.Identifier().getText());
-
             if (var == null) {
-                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx)); return;
+                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
+                return;
             }
 
             INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variable.getStackPosition()));
             INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, var.getStackPosition()));
-
         });
-
 
         return result;
     }
@@ -271,13 +273,13 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
             visitStringOpr(ctx.simpleExpression(), ctx.RelationOp(), res -> {
                 if (res.equals("<")) {
                     INSTRUCTIONS.add(new Instruction(OperationType.LT, level));
-                }else if (res.equals("<=")) {
+                } else if (res.equals("<=")) {
                     INSTRUCTIONS.add(new Instruction(OperationType.LTE, level));
-                }else if (res.equals(">")) {
+                } else if (res.equals(">")) {
                     INSTRUCTIONS.add(new Instruction(OperationType.GT, level));
-                }else if (res.equals(">=")) {
+                } else if (res.equals(">=")) {
                     INSTRUCTIONS.add(new Instruction(OperationType.GTE, level));
-                }else if (res.equals("==")) {
+                } else if (res.equals("==")) {
                     INSTRUCTIONS.add(new Instruction(OperationType.EQ, level));
                 }
             });
@@ -293,8 +295,12 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         if (ctx.term().size() > 1) {
             visitIntOpr(ctx.term(), ctx.Add(), ctx.Sub(), res -> {
                 switch (res) {
-                    case NewtonParser.Add: INSTRUCTIONS.add(new Instruction(OperationType.ADD, level)); break;
-                    case NewtonParser.Sub: INSTRUCTIONS.add(new Instruction(OperationType.SUB, level)); break;
+                    case NewtonParser.Add:
+                        INSTRUCTIONS.add(new Instruction(OperationType.ADD, level));
+                        break;
+                    case NewtonParser.Sub:
+                        INSTRUCTIONS.add(new Instruction(OperationType.SUB, level));
+                        break;
                 }
             });
             return null;
@@ -305,17 +311,20 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
 
     @Override
     public Void visitTerm(NewtonParser.TermContext ctx) {
-
         if (ctx.factor().isEmpty()) {
             // TODO zavorky
             return null;
         }
 
-        if (ctx.factor().size() > 1){
+        if (ctx.factor().size() > 1) {
             visitIntOpr(ctx.factor(), ctx.Mul(), ctx.Div(), res -> {
                 switch (res) {
-                    case NewtonParser.Mul: INSTRUCTIONS.add(new Instruction(OperationType.MUL, level)); break;
-                    case NewtonParser.Div: INSTRUCTIONS.add(new Instruction(OperationType.DIV, level)); break;
+                    case NewtonParser.Mul:
+                        INSTRUCTIONS.add(new Instruction(OperationType.MUL, level));
+                        break;
+                    case NewtonParser.Div:
+                        INSTRUCTIONS.add(new Instruction(OperationType.DIV, level));
+                        break;
                 }
             });
             return null;
@@ -329,7 +338,8 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         if (ctx.Identifier() != null) {
             Variable variable = getVariable(ctx.Identifier().getText());
             if (variable == null) {
-                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx)); return null;
+                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
+                return null;
             }
             INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variable.getStackPosition()));
         }
@@ -341,8 +351,22 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         if (ctx.Int() != null) {
             INSTRUCTIONS.add(new Instruction(InstructionType.LIT, level, ctx.Int().getText()));
         } else if (ctx.Boolean() != null) {
-            INSTRUCTIONS.add(new Instruction(InstructionType.LIT, level,  ctx.Boolean().getText().equals("true") ? 1 : 0));
+            INSTRUCTIONS.add(new Instruction(InstructionType.LIT, level, ctx.Boolean().getText().equals("true") ? 1 : 0));
         }
         return super.visitSimpleFactor(ctx);
+    }
+
+    @Override
+    public Void visitIfStatement(NewtonParser.IfStatementContext ctx) {
+        visit(ctx.expression());
+
+        int position = INSTRUCTIONS.size();
+
+        ctx.statement().forEach(this::visit);
+
+        int condJump = INSTRUCTIONS.size() + 1;
+        INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, level, condJump));
+
+        return null;
     }
 }
