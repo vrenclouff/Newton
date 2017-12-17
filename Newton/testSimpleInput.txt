@@ -4,8 +4,8 @@ variable:
     int b;
 main()
     a = 3;
-    b = 5;
-    switch 1 of
+    b = 10;
+    switch b of
         0: a = 0;
         1: a = 1;
         3: a = 3;

@@ -1,4 +1,5 @@
 
+import com.sun.corba.se.impl.naming.namingutil.INSURL;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -418,34 +419,29 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
 
     @Override
     public Void visitSwitchStatement(NewtonParser.SwitchStatementContext ctx) {
+        List<Integer> jumpEndPositions = new ArrayList<Integer>();
 
-        visit(ctx.simpleExpression());
-
-        int jumpPosition = INSTRUCTIONS.size();
-        int jumpToCase = -1;
-
-        int endPosition = -1;
-
-        String caseValue = INSTRUCTIONS.get(INSTRUCTIONS.size() - 1).getValue();    // TODO: Ziskat hodnotu na adrese, pokud je to promenna
         for (int i = 0; i < ctx.caseStatement().size(); i++) {
-            String currentCase = ctx.caseStatement(i).Int().getText();
-            if (currentCase.equals(caseValue)) {
-                jumpToCase = INSTRUCTIONS.size() + 1;
-            }
+            visit(ctx.simpleExpression());
 
+            INSTRUCTIONS.add(new Instruction(InstructionType.LIT, level, ctx.caseStatement(i).Int()+""));
+            INSTRUCTIONS.add(new Instruction(OperationType.EQ, level));
+
+            int position = INSTRUCTIONS.size();
             visit(ctx.caseStatement(i));
 
-            if (currentCase.equals(caseValue)) {    // TODO: Udelat lip
-                endPosition = INSTRUCTIONS.size() + 1;
-            }
+            jumpEndPositions.add(INSTRUCTIONS.size()+1+i);
+
+            int pos = INSTRUCTIONS.size() + i + 2;
+            INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, level, pos));
         }
 
-        if (jumpToCase == -1) jumpToCase = INSTRUCTIONS.size() + 1; // default
-        visit(ctx.statement());
+        visit(ctx.statement()); // default
 
-        INSTRUCTIONS.add(jumpPosition, new Instruction(InstructionType.JMP, level, jumpToCase));
-
-        INSTRUCTIONS.add(endPosition, new Instruction(InstructionType.JMP, level, INSTRUCTIONS.size() + 1));
+        int endJump = INSTRUCTIONS.size() + jumpEndPositions.size();
+        for (Integer i : jumpEndPositions) {
+            INSTRUCTIONS.add(i, new Instruction(InstructionType.JMP, level, endJump));
+        }
 
         return null;
     }
