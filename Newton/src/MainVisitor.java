@@ -457,7 +457,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
     @Override
     public DataType visitTernaryStatement(NewtonParser.TernaryStatementContext ctx) {
-        Object o1 = visit(ctx.expression(0));
+        DataType o1 = visit(ctx.expression(0));
         if (o1 != DataType.BOOL) {
             MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
             return null;
@@ -465,7 +465,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
         int position = INSTRUCTIONS.size();
 
-        Object o2 = visit(ctx.expression(1));
+        DataType o2 = visit(ctx.expression(1));
         if (o2 != DataType.BOOL) {
             MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
             return null;
