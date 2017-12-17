@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 
-public class MainVisitor extends NewtonBaseVisitor<Void> {
+public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
     /*
      * Aktivacni zaznam
@@ -95,11 +95,11 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitProgram(NewtonParser.ProgramContext ctx) {
+    public DataType visitProgram(NewtonParser.ProgramContext ctx) {
 
         // vygenerovani opakujicich se kusu bloku, atd
 
-        Void result = super.visitProgram(ctx);
+        DataType result = super.visitProgram(ctx);
 
         INSTRUCTIONS.add(new Instruction(InstructionType.RET, 0, 0));
 
@@ -107,7 +107,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitMainStatement(NewtonParser.MainStatementContext ctx) {
+    public DataType visitMainStatement(NewtonParser.MainStatementContext ctx) {
 
         if (ctx.statement().isEmpty()) {
             MESSAGES.add(MessageUtil.create(MessageType.EMPTY_MAIN, ctx));
@@ -133,7 +133,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitProgramHeading(NewtonParser.ProgramHeadingContext ctx) {
+    public DataType visitProgramHeading(NewtonParser.ProgramHeadingContext ctx) {
 
         // pro aktivacni zaznam
         int spaceAtStack = ACTIVATION_RECORD_SIZE;
@@ -151,7 +151,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitVariableDefinition(NewtonParser.VariableDefinitionContext ctx) {
+    public DataType visitVariableDefinition(NewtonParser.VariableDefinitionContext ctx) {
         String variableName = ctx.Identifier().getText();
         String type = ctx.baseType().getText();
 
@@ -169,7 +169,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitConstantDefinition(NewtonParser.ConstantDefinitionContext ctx) {
+    public DataType visitConstantDefinition(NewtonParser.ConstantDefinitionContext ctx) {
         String variableName = ctx.Identifier().getText();
         if (isVariableDeclared(variableName)) {
             MESSAGES.add(MessageUtil.create(MessageType.CONSTANT_IS_DECLARED, ctx));
@@ -190,7 +190,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
 
         CONSTANTS.put(variableName, variable);
 
-        Void result = super.visitConstantDefinition(ctx);
+        DataType result = super.visitConstantDefinition(ctx);
 
         INSTRUCTIONS.add(new Instruction(InstructionType.LIT, value));
         INSTRUCTIONS.add(new Instruction(InstructionType.STO, variable.getStackPosition()));
@@ -199,7 +199,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitParallelAssignmentStatement(NewtonParser.ParallelAssignmentStatementContext ctx) {
+    public DataType visitParallelAssignmentStatement(NewtonParser.ParallelAssignmentStatementContext ctx) {
 
         if (ctx.Identifier().size() != ctx.simpleFactor().size()) {
             MESSAGES.add(MessageUtil.create(MessageType.PARALLEL_WRONG_OPERAND_SIZE, ctx));
@@ -215,15 +215,21 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
                 return null;
             }
 
-            visit(ctx.simpleFactor().get(i));
-            INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
+            DataType type =  visit(ctx.simpleFactor().get(i));
+
+            if (type.equals(variable.getDataType())) {
+                INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
+            } else {
+                MESSAGES.add(MessageUtil.create(MessageType.WRONG_INITIALIZE, ctx));
+            }
+
         }
 
         return null;
     }
 
     @Override
-    public Void visitAssignmentStatement(NewtonParser.AssignmentStatementContext ctx) {
+    public DataType visitAssignmentStatement(NewtonParser.AssignmentStatementContext ctx) {
         String variableName = ctx.Identifier().getText();
 
         if (CONSTANTS.containsKey(variableName)) {
@@ -238,7 +244,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
             return null;
         }
 
-        Void result = super.visitAssignmentStatement(ctx);
+        DataType result = super.visitAssignmentStatement(ctx);
 
         INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
 
@@ -257,7 +263,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitExpression(NewtonParser.ExpressionContext ctx) {
+    public DataType visitExpression(NewtonParser.ExpressionContext ctx) {
 
 //        if (!ctx.expression().isEmpty()) {
 //            visitStringOpr(ctx.expression(), ctx.LogicalOp(), res -> {
@@ -284,14 +290,14 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
                     INSTRUCTIONS.add(new Instruction(OperationType.EQ, level));
                 }
             });
-            return null;
+            return DataType.BOOL;
         }
 
         return super.visitExpression(ctx);
     }
 
     @Override
-    public Void visitSimpleExpression(NewtonParser.SimpleExpressionContext ctx) {
+    public DataType visitSimpleExpression(NewtonParser.SimpleExpressionContext ctx) {
 
         if (ctx.term().size() > 1) {
             visitIntOpr(ctx.term(), ctx.Add(), ctx.Sub(), res -> {
@@ -304,14 +310,14 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
                         break;
                 }
             });
-            return null;
+            return DataType.INT;
         }
 
         return super.visitSimpleExpression(ctx);
     }
 
     @Override
-    public Void visitTerm(NewtonParser.TermContext ctx) {
+    public DataType visitTerm(NewtonParser.TermContext ctx) {
         if (ctx.factor().isEmpty()) {
             // TODO zavorky
             return null;
@@ -328,14 +334,14 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
                         break;
                 }
             });
-            return null;
+            return DataType.INT;
         }
 
         return super.visitTerm(ctx);
     }
 
     @Override
-    public Void visitFactor(NewtonParser.FactorContext ctx) {
+    public DataType visitFactor(NewtonParser.FactorContext ctx) {
         if (ctx.Identifier() != null) {
             Variable variable = getVariable(ctx.Identifier().getText());
             if (variable == null) {
@@ -343,22 +349,25 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
                 return null;
             }
             INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variable.getStackPosition()));
+            return variable.getDataType();
         }
         return super.visitFactor(ctx);
     }
 
     @Override
-    public Void visitSimpleFactor(NewtonParser.SimpleFactorContext ctx) {
+    public DataType visitSimpleFactor(NewtonParser.SimpleFactorContext ctx) {
         if (ctx.Int() != null) {
             INSTRUCTIONS.add(new Instruction(InstructionType.LIT, level, ctx.Int().getText()));
+            return DataType.INT;
         } else if (ctx.Boolean() != null) {
             INSTRUCTIONS.add(new Instruction(InstructionType.LIT, level, ctx.Boolean().getText().equals("true") ? 1 : 0));
+            return DataType.BOOL;
         }
-        return super.visitSimpleFactor(ctx);
+        return null; // nejnizsi uzel derivacniho stromu
     }
 
     @Override
-    public Void visitIfStatement(NewtonParser.IfStatementContext ctx) {
+    public DataType visitIfStatement(NewtonParser.IfStatementContext ctx) {
         visit(ctx.expression()); // generuj instrukce pro podminku
 
         int position = INSTRUCTIONS.size();
@@ -385,7 +394,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitWhileStatement(NewtonParser.WhileStatementContext ctx) {
+    public DataType visitWhileStatement(NewtonParser.WhileStatementContext ctx) {
         int iterationJump = INSTRUCTIONS.size();
 
         visit(ctx.expression());
@@ -403,7 +412,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitDoWhileStatement(NewtonParser.DoWhileStatementContext ctx) {
+    public DataType visitDoWhileStatement(NewtonParser.DoWhileStatementContext ctx) {
         int iterationJump = INSTRUCTIONS.size();
 
         ctx.statement().forEach(this::visit);
@@ -418,7 +427,7 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitSwitchStatement(NewtonParser.SwitchStatementContext ctx) {
+    public DataType visitSwitchStatement(NewtonParser.SwitchStatementContext ctx) {
         List<Integer> jumpEndPositions = new ArrayList<Integer>();
 
         for (int i = 0; i < ctx.caseStatement().size(); i++) {
