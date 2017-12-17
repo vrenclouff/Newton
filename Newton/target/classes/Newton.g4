@@ -72,10 +72,13 @@ doWhileStatement // done
 
 conditionalStatement
     : ifStatement
-    | caseStatement;
+    | switchStatement;
+
+switchStatement
+    : BeginSwitch simpleExpression Of caseStatement+ DefaultSwitch Colon statement EndSwitch;
 
 caseStatement
-    : BeginSwitch simpleExpression Of (Int Colon statement)+ DefaultSwitch Colon statement EndSwitch;   // vice statements v default ??
+    : Int Colon statement; // muze byt vice statements v case ??
 
 ifStatement // done
     : BeginIf expression Then statement* elseStatement? EndIf;

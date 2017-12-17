@@ -416,6 +416,40 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visitSwitchStatement(NewtonParser.SwitchStatementContext ctx) {
+
+        visit(ctx.simpleExpression());
+
+        int jumpPosition = INSTRUCTIONS.size();
+        int jumpToCase = -1;
+
+        int endPosition = -1;
+
+        String caseValue = INSTRUCTIONS.get(INSTRUCTIONS.size() - 1).getValue();    // TODO: Ziskat hodnotu na adrese, pokud je to promenna
+        for (int i = 0; i < ctx.caseStatement().size(); i++) {
+            String currentCase = ctx.caseStatement(i).Int().getText();
+            if (currentCase.equals(caseValue)) {
+                jumpToCase = INSTRUCTIONS.size() + 1;
+            }
+
+            visit(ctx.caseStatement(i));
+
+            if (currentCase.equals(caseValue)) {    // TODO: Udelat lip
+                endPosition = INSTRUCTIONS.size() + 1;
+            }
+        }
+
+        if (jumpToCase == -1) jumpToCase = INSTRUCTIONS.size() + 1; // default
+        visit(ctx.statement());
+
+        INSTRUCTIONS.add(jumpPosition, new Instruction(InstructionType.JMP, level, jumpToCase));
+
+        INSTRUCTIONS.add(endPosition, new Instruction(InstructionType.JMP, level, INSTRUCTIONS.size() + 1));
+
+        return null;
+    }
+
     private void addNegation() {
         INSTRUCTIONS.add(new Instruction(InstructionType.LIT, level, 0));
         INSTRUCTIONS.add(new Instruction(OperationType.EQ, level));
