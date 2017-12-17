@@ -17,6 +17,7 @@ public enum MessageType {
     WRONG_INITIALIZE                (Type.ERROR, "at line {0}. Incompatible types."),
     UNSUPPORTED_OPERATION           (Type.ERROR, "at line {0}. Unsupported operation."),
     PARALLEL_WRONG_OPERAND_SIZE     (Type.ERROR, "at line {0}. Number of variables doesn't equal of number of values."),
+    WRONG_TYPE                      (Type.ERROR, "at line {0}. Wrong type"),
     EMPTY_MAIN                      (Type.WARNING, "Main function is empty. Program doesn't have do nothing."),
 
     ;
