@@ -400,4 +400,24 @@ public class MainVisitor extends NewtonBaseVisitor<Void> {
 
         return null;
     }
+
+    @Override
+    public Void visitDoWhileStatement(NewtonParser.DoWhileStatementContext ctx) {
+        int iterationJump = INSTRUCTIONS.size();
+
+        ctx.statement().forEach(this::visit);
+
+        visit(ctx.expression());
+
+        addNegation();  // Skaceme pri dodrzeni podminky, takze musime znegovat
+
+        INSTRUCTIONS.add(new Instruction(InstructionType.JMC, level, iterationJump));
+
+        return null;
+    }
+
+    private void addNegation() {
+        INSTRUCTIONS.add(new Instruction(InstructionType.LIT, level, 0));
+        INSTRUCTIONS.add(new Instruction(OperationType.EQ, level));
+    }
 }

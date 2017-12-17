@@ -1,18 +1,10 @@
 constant:
 variable:
-    bool res;
     int a;
-    int d;
 main()
-    a = 4;
-    d = a + 3;
-    if a > d then
-        a = 50;
-        res = true;
-    else
-        res = false;
-        a = 80;
-    endif
+    a = 3;
+    repeat
+        a = a - 1;
+    until a > 0
     a = 100;
 end
-    
