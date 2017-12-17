@@ -4,23 +4,23 @@ grammar Newton;
 program
     : programHeading functionStatement* mainStatement;
 
-programHeading
+programHeading // done
     : constantDefinitionPart variableDefinitionPart;
 
-constantDefinitionPart
+constantDefinitionPart // done
     : DefConstant constantDefinition*;
 
-constantDefinition
+constantDefinition // done
     : Const IntType Identifier Assign Int Semi
     | Const BoolType Identifier Assign Boolean Semi;
 
-variableDefinitionPart
+variableDefinitionPart // done
     : DefVariable variableDefinition*;
 
-variableDefinition
+variableDefinition // done
     : baseType Identifier Semi;
 
-mainStatement
+mainStatement // done
     : MainFnc RoundBracketLeft RoundBracketRight statement* EndBlock;
 
 functionStatement
@@ -41,13 +41,13 @@ statement
     | parallelAssignmentStatement
     | callFunctionStatement;
 
-assignmentStatement
+assignmentStatement // done
     : Identifier Assign multipleAssignmentStatement* (expression | ternaryStatement) Semi;
 
-multipleAssignmentStatement
+multipleAssignmentStatement // done
     : Identifier Assign;
 
-parallelAssignmentStatement
+parallelAssignmentStatement // done
     : CurlyBracketLeft Identifier (',' Identifier)* CurlyBracketRight Assign CurlyBracketLeft simpleFactor (',' simpleFactor)* CurlyBracketRight Semi;
 
 callFunctionStatement
@@ -61,50 +61,51 @@ loopStatement
     | forStatement
     | doWhileStatement;
 
-whileStatement
+whileStatement // done
     : BeginWhile expression Do statement* EndWhile;
 
 forStatement
     : BeginFor (Identifier Assign)? factor Colon factor (Colon Int)? Do statement* EndFor;   // for a = 1:10:2 (1 az 10 po 2)
 
-doWhileStatement
+doWhileStatement // done
     : Repeat statement* Until expression;
 
 conditionalStatement
     : ifStatement
-    | caseStatement;
+    | switchStatement;
+
+switchStatement
+    : BeginSwitch simpleExpression Of caseStatement+ DefaultSwitch Colon statement EndSwitch;
 
 caseStatement
-    : BeginSwitch simpleExpression Of (Int Colon statement)+ DefaultSwitch Colon + statement EndSwitch;
+    : Int Colon statement; // muze byt vice statements v case ??
 
-ifStatement
+ifStatement // done
     : BeginIf expression Then statement* elseStatement? EndIf;
 
-elseStatement
+elseStatement // done
     : Else statement*;
 
 ternaryStatement
     : expression Ques expression Colon expression;
 
-expression
+expression // done
     : simpleExpression (RelationOp simpleExpression)* (LogicalOp expression)*;
 
-
-simpleExpression
+simpleExpression // done
     : term ((Add | Sub) term)*;
 
-term
+term // done
     : factor ((Mul | Div) factor)*
     | RoundBracketLeft simpleExpression RoundBracketRight ((Add | Sub | Mul | Div) simpleExpression)?;
 
-factor
+factor // done
     : simpleFactor
     | Identifier;
 
-simpleFactor
+simpleFactor // done
     : Int
     | Boolean;
-
 
 EndBlock : 'end';
 MainFnc : 'main';

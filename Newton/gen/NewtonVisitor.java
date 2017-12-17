@@ -1,4 +1,4 @@
-// Generated from /Users/macbook/Developer/fjp/Newton/src/Newton.g4 by ANTLR 4.7
+// Generated from C:/Users/Barat/OneDrive/Dokumenty/_FAV/ING/FJP/Semestralka/projekt/Newton/src\Newton.g4 by ANTLR 4.7
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -135,6 +135,12 @@ public interface NewtonVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitConditionalStatement(NewtonParser.ConditionalStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link NewtonParser#switchStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSwitchStatement(NewtonParser.SwitchStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link NewtonParser#caseStatement}.
 	 * @param ctx the parse tree
