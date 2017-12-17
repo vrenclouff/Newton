@@ -455,6 +455,24 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         return null;
     }
 
+    @Override
+    public DataType visitTernaryStatement(NewtonParser.TernaryStatementContext ctx) {
+        visit(ctx.expression(0));
+        int position = INSTRUCTIONS.size();
+
+        visit(ctx.expression(1));
+
+        int jumpPos = INSTRUCTIONS.size()+1;
+
+        INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, level, INSTRUCTIONS.size() + 2));
+
+        visit(ctx.expression(2));
+
+        INSTRUCTIONS.add(jumpPos, new Instruction(InstructionType.JMP, level, INSTRUCTIONS.size() + 1));
+
+        return null;
+    }
+
     private void addNegation() {
         INSTRUCTIONS.add(new Instruction(InstructionType.LIT, level, 0));
         INSTRUCTIONS.add(new Instruction(OperationType.EQ, level));

@@ -74,7 +74,7 @@ conditionalStatement
     : ifStatement
     | switchStatement;
 
-switchStatement
+switchStatement // done
     : BeginSwitch simpleExpression Of caseStatement+ DefaultSwitch Colon statement EndSwitch;
 
 caseStatement
