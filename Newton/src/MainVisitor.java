@@ -222,7 +222,6 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             } else {
                 MESSAGES.add(MessageUtil.create(MessageType.WRONG_INITIALIZE, ctx));
             }
-
         }
 
         return null;
@@ -273,6 +272,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
                     addOR();
                 }
             });
+
             return null;
         }
 
@@ -427,6 +427,19 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
     }
 
     @Override
+    public DataType visitRepeatUntilStatement(NewtonParser.RepeatUntilStatementContext ctx) {
+        int iterationJump = INSTRUCTIONS.size();
+
+        ctx.statement().forEach(this::visit);
+
+        visit(ctx.expression());
+
+        INSTRUCTIONS.add(new Instruction(InstructionType.JMC, level, iterationJump));
+
+        return null;
+    }
+
+    @Override
     public DataType visitSwitchStatement(NewtonParser.SwitchStatementContext ctx) {
         List<Integer> jumpEndPositions = new ArrayList<Integer>();
 
@@ -455,6 +468,8 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         return null;
     }
 
+
+    // TODO: Kontrola typu pri prirazeni
     @Override
     public DataType visitTernaryStatement(NewtonParser.TernaryStatementContext ctx) {
         DataType o1 = visit(ctx.expression(0));

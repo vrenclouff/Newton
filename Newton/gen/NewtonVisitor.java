@@ -130,6 +130,12 @@ public interface NewtonVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDoWhileStatement(NewtonParser.DoWhileStatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link NewtonParser#repeatUntilStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRepeatUntilStatement(NewtonParser.RepeatUntilStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link NewtonParser#conditionalStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
