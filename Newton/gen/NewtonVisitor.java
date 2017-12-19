@@ -1,4 +1,4 @@
-// Generated from C:/Users/Barat/OneDrive/Dokumenty/_FAV/ING/FJP/Semestralka/projekt/Newton/src\Newton.g4 by ANTLR 4.7
+// Generated from /Users/macbook/Developer/fjp/Newton/src/Newton.g4 by ANTLR 4.7
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -177,6 +177,12 @@ public interface NewtonVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpression(NewtonParser.ExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link NewtonParser#relationExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRelationExpression(NewtonParser.RelationExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link NewtonParser#simpleExpression}.
 	 * @param ctx the parse tree

@@ -264,17 +264,26 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
     @Override
     public DataType visitExpression(NewtonParser.ExpressionContext ctx) {
 
-        if (!ctx.expression().isEmpty()) {
-            visitStringOpr(ctx.expression(), ctx.LogicalOp(), res -> {
+        if (ctx.relationExpression().size() > 1) {
+            visitStringOpr(ctx.relationExpression(), ctx.LogicalOp(), res -> {
                 if (res.equals("&&")) {
-                    addAND();
+                    INSTRUCTIONS.add(new Instruction(OperationType.EQ, level));
                 } else if (res.equals("||")) {
-                    addOR();
+                    INSTRUCTIONS.add(new Instruction(OperationType.ADD, level));
+                    INSTRUCTIONS.add(new Instruction(InstructionType.LIT, level, 0));
+                    INSTRUCTIONS.add(new Instruction(OperationType.EQ, level));
+                    addNegation();
                 }
             });
 
             return null;
         }
+
+        return super.visitExpression(ctx);
+    }
+
+    @Override
+    public DataType visitRelationExpression(NewtonParser.RelationExpressionContext ctx) {
 
         if (ctx.simpleExpression().size() > 1) {
             visitStringOpr(ctx.simpleExpression(), ctx.RelationOp(), res -> {
@@ -293,7 +302,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             return DataType.BOOL;
         }
 
-        return super.visitExpression(ctx);
+        return super.visitRelationExpression(ctx);
     }
 
     @Override
@@ -495,17 +504,6 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         INSTRUCTIONS.add(jumpPos, new Instruction(InstructionType.JMP, level, INSTRUCTIONS.size() + 1));
 
         return o3;
-    }
-
-    private void addAND() {
-        INSTRUCTIONS.add(new Instruction(OperationType.EQ, level));
-    }
-
-    private void addOR() {
-        INSTRUCTIONS.add(new Instruction(OperationType.ADD, level));
-        INSTRUCTIONS.add(new Instruction(InstructionType.LIT, level, 0));
-        INSTRUCTIONS.add(new Instruction(OperationType.EQ, level));
-        addNegation();
     }
 
     private void addNegation() {

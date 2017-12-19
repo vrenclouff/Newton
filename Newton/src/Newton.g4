@@ -94,7 +94,10 @@ ternaryStatement
     : expression Ques expression Colon expression;
 
 expression // done
-    : simpleExpression (RelationOp simpleExpression)* (LogicalOp expression)*;
+    : relationExpression (LogicalOp relationExpression)*;
+
+relationExpression
+    : simpleExpression (RelationOp simpleExpression)*;
 
 simpleExpression // done
     : term ((Add | Sub) term)*;
