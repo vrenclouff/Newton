@@ -18,8 +18,9 @@ public enum MessageType {
     UNSUPPORTED_OPERATION           (Type.ERROR, "at line {0}. Unsupported operation."),
     PARALLEL_WRONG_OPERAND_SIZE     (Type.ERROR, "at line {0}. Number of variables doesn't equal of number of values."),
     WRONG_TYPE                      (Type.ERROR, "at line {0}. Wrong type"),
+    UNKNOWN_FUNCTION                (Type.ERROR, "at line {0}. Unknown functin."),
     EMPTY_MAIN                      (Type.WARNING, "Main function is empty. Program doesn't have do nothing."),
-
+    OVERFLOWED_IDENTIFIER           (Type.ERROR, "at line {0}. overflowed length of identifier"),
     ;
     private final Type type;
     private final String pattern;

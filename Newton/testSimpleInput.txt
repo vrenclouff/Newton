@@ -1,12 +1,16 @@
 constant:
 variable:
-    bool minVal;
     int a;
     int b;
+
+fnc int testFnc()
+    if a == 3 then
+        a = 5;
+    endif
+    return a;
+end
+
 main()
     a = 3;
-    b = 2;
-    if a == 3 || b == 1 then
-        b = 100;
-    endif
+    b = testFnc();
 end

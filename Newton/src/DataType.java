@@ -4,6 +4,7 @@
 public enum DataType {
     INT,
     BOOL,
+    VOID,
     ;
 
     @Override

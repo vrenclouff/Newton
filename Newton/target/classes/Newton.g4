@@ -94,9 +94,9 @@ ternaryStatement
     : expression Ques expression Colon expression;
 
 expression // done
-    : relationExpression (LogicalOp relationExpression)*;
+    : relationExpression ((And | Or) relationExpression)*;
 
-relationExpression
+relationExpression // done
     : simpleExpression (RelationOp simpleExpression)*;
 
 simpleExpression // done
@@ -160,7 +160,8 @@ Gt : '>';
 Lte: '<=';
 Gte: '>=';
 Eq: '==';
-LogicalOp : '&&' | '||';
+And : '&&';
+Or : '||';
 Identifier: [a-zA-Z]+[a-zA-Z0-9]*;
 WS :  [ \t\r\n]+ -> skip;
 

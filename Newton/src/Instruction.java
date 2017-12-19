@@ -13,8 +13,8 @@ public class Instruction {
         this.value = value;
     }
 
-    public Instruction(OperationType operationType, int level) {
-        this(InstructionType.OPR, level, operationType.ordinal() + 1);
+    public Instruction(OperationType operationType) {
+        this(InstructionType.OPR, 0, operationType.ordinal() + 1);
     }
 
     public Instruction(InstructionType type, int level, int value) {

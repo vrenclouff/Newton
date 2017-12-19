@@ -44,9 +44,10 @@ Gt=43
 Lte=44
 Gte=45
 Eq=46
-LogicalOp=47
-Identifier=48
-WS=49
+And=47
+Or=48
+Identifier=49
+WS=50
 'end'=1
 'main'=2
 'constant:'=3
@@ -90,3 +91,5 @@ WS=49
 '<='=44
 '>='=45
 '=='=46
+'&&'=47
+'||'=48
