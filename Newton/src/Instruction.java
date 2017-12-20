@@ -29,16 +29,12 @@ public class Instruction {
         this(type, 0, value);
     }
 
-    public InstructionType getType() {
-        return type;
+    public void setValue(String value) {
+        this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public int getLevel() {
-        return level;
+    public void setValue(int value) {
+        this.value = String.valueOf(value);
     }
 
     @Override

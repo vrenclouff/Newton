@@ -34,11 +34,10 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
     /* Hlasky pri preklady (ERROR, WARNING, atd..) */
     private final List<String> MESSAGES = new LinkedList<>();
 
-    /* Vrchol zasobniku (citac hodnot na zasobniku) */
-    private int topStack = -1;
-
     /* Aktualni uroven zanoreni */
     private int level = 0;
+
+    private Instruction jmpToMain = new Instruction(InstructionType.JMP, 0);
 
     public List<Instruction> getInstructions() {
         return INSTRUCTIONS;
@@ -101,6 +100,8 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
         // vygenerovani opakujicich se kusu bloku, atd
 
+        INSTRUCTIONS.add(new Instruction(InstructionType.JMP, 1));
+
         DataType result = super.visitProgram(ctx);
 
         INSTRUCTIONS.add(new Instruction(InstructionType.RET, 0, 0));
@@ -116,20 +117,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             return null;
         }
 
-        int offset = 2 + CONSTANTS.size() * 2; // pocet instrukci pro vytvoreni konstant + 2 instrukce pro return hodnotu
-        int position;
-
-        if (offset != 0) {
-            // skok na instrukce pro vytvoreni konstant
-            INSTRUCTIONS.add(0, new Instruction(InstructionType.JMP, 1));
-            offset += 2; // nove pridana JMP + za aktualne posledni instrukci
-            position = INSTRUCTIONS.size() + 1;
-        } else {
-            position = INSTRUCTIONS.size();
-        }
-
-        // skoc na prvni instrukci v mainu
-        INSTRUCTIONS.add(offset, new Instruction(InstructionType.JMP, position));
+        jmpToMain.setValue(INSTRUCTIONS.size());
 
         return super.visitMainStatement(ctx);
     }
@@ -148,9 +136,12 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         INSTRUCTIONS.add(new Instruction(InstructionType.INT, spaceAtStack));
         VARIABLES.put("#", new Variable("#", DataType.INT, ACTIVATION_RECORD_SIZE));
 
-        topStack = spaceAtStack;
+        visit(ctx.constantDefinitionPart());
+        visit(ctx.variableDefinitionPart());
 
-        return super.visitProgramHeading(ctx);
+        INSTRUCTIONS.add(jmpToMain);
+
+        return null;
     }
 
     @Override
@@ -256,10 +247,9 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             return null;
         }
 
-        int position = INSTRUCTIONS.size() + 2;
         DataType returnType = ctx.baseType() != null ? (ctx.baseType().IntType() != null ? DataType.INT : DataType.BOOL) : DataType.VOID;
 
-        FUNCTIONS.put(name, new FunctionDefinition(name, position, returnType));
+        FUNCTIONS.put(name, new FunctionDefinition(name, INSTRUCTIONS.size(), returnType));
 
         // vytvor aktivacni zaznam
         int spaceAtStack = ACTIVATION_RECORD_SIZE + 0; // 0 pocet parametru
@@ -469,26 +459,33 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
     @Override
     public DataType visitIfStatement(NewtonParser.IfStatementContext ctx) {
+
         visit(ctx.expression()); // generuj instrukce pro podminku
 
-        int position = INSTRUCTIONS.size();
+       // int position = INSTRUCTIONS.size();
+
+
+        Instruction jmc = new Instruction(InstructionType.JMC, 0);
+        INSTRUCTIONS.add(jmc);
 
         ctx.statement().forEach(this::visit);
 
         if (ctx.elseStatement() != null) {
-            // podmineny skok, pokud existuje else vetev skoc na ni
-            INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, INSTRUCTIONS.size() + 2));
 
-            position = INSTRUCTIONS.size();
+            // po vykonani true preskoc else
+            Instruction jmp = new Instruction(InstructionType.JMP, 0);
+            INSTRUCTIONS.add(jmp);
 
-            // zpracuj else vetev
+            // nastav adresu zacatku else
+            jmc.setValue(INSTRUCTIONS.size());
+
             visit(ctx.elseStatement());
 
-            // zpracuje true vetev a po skonceni skoc preskoc else vetev
-            INSTRUCTIONS.add(position, new Instruction(InstructionType.JMP, INSTRUCTIONS.size() + 1));
+            jmp.setValue(INSTRUCTIONS.size());
+
         } else {
-            // pokud neexistuje else vetev skoc za podminku
-            INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, INSTRUCTIONS.size() + 1));
+            // skoc na kod za podminkou
+            jmc.setValue(INSTRUCTIONS.size());
         }
 
         return null;
@@ -507,6 +504,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         INSTRUCTIONS.add(new Instruction(InstructionType.JMP, iterationJump));
 
         int condJump = INSTRUCTIONS.size() + 1;
+        // TODO nemuzem pousouvat indexy
         INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, condJump));
 
         return null;
@@ -556,6 +554,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             jumpEndPositions.add(INSTRUCTIONS.size()+1+i);
 
             int pos = INSTRUCTIONS.size() + i + 2;
+            // TODO nemuzem pousouvat indexy
             INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, pos));
         }
 
@@ -563,6 +562,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
         int endJump = INSTRUCTIONS.size() + jumpEndPositions.size();
         for (Integer i : jumpEndPositions) {
+            // TODO nemuzem pousouvat indexy
             INSTRUCTIONS.add(i, new Instruction(InstructionType.JMP, endJump));
         }
 
@@ -585,6 +585,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
         int jumpPos = INSTRUCTIONS.size()+1;
 
+        // TODO nemuzem pousouvat indexy
         INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, INSTRUCTIONS.size() + 2));
 
         DataType o3 = visit(ctx.expression(2));
@@ -593,6 +594,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             return null;
         }
 
+        // TODO nemuzem pousouvat indexy
         INSTRUCTIONS.add(jumpPos, new Instruction(InstructionType.JMP, INSTRUCTIONS.size() + 1));
 
         return o3;

@@ -1,16 +1,16 @@
 constant:
 variable:
     int a;
-    int b;
 
-fnc int testFnc()
-    if a == 3 then
-        a = 5;
-    endif
-    return a;
+fnc void test()
+    if a == 2 then
+            a = 8;
+        else
+            a = 7;
+        endif
 end
 
 main()
-    a = 3;
-    b = testFnc();
+    a = 2;
+    test();
 end
