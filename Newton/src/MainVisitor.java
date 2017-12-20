@@ -395,19 +395,23 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
     @Override
     public DataType visitWhileStatement(NewtonParser.WhileStatementContext ctx) {
+
         int iterationJump = INSTRUCTIONS.size();
 
-        visit(ctx.expression());
+        DataType conditional = visit(ctx.expression());
+        if (conditional != DataType.BOOL) {
+            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
+            return null;
+        }
 
-        int position  = INSTRUCTIONS.size();
+        Instruction jmc = new Instruction(InstructionType.JMC, 0);
+        INSTRUCTIONS.add(jmc);
 
         ctx.statement().forEach(this::visit);
 
         INSTRUCTIONS.add(new Instruction(InstructionType.JMP, iterationJump));
 
-        int condJump = INSTRUCTIONS.size() + 1;
-        // TODO nemuzem pousouvat indexy
-        INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, condJump));
+        jmc.setValue(INSTRUCTIONS.size());
 
         return null;
     }

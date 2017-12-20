@@ -4,12 +4,13 @@ variable:
     int b;
     int c;
 
-fnc int getTrue()
-    return a < 2 ? 7 : 8;
+fnc void callWhile()
+    while a < 5 do
+        a = a + 1;
+    endwhile
 end
 
 main()
    a = 3;
-   b = 2;
-   c = getTrue();
+   callWhile();
 end
