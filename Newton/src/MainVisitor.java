@@ -348,116 +348,6 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
     }
 
     @Override
-    public DataType visitExpression(NewtonParser.ExpressionContext ctx) {
-        if (ctx.relationExpression().size() > 1) {
-            visitIntOpr(ctx.relationExpression(), ctx.And(), ctx.Or(), res -> {
-                switch (res) {
-                    case NewtonParser.And:
-                        INSTRUCTIONS.add(new Instruction(OperationType.EQ));
-                        break;
-                    case NewtonParser.Or:
-                        INSTRUCTIONS.add(new Instruction(OperationType.ADD));
-                        INSTRUCTIONS.add(new Instruction(InstructionType.LIT, 0));
-                        INSTRUCTIONS.add(new Instruction(OperationType.EQ));
-                        addNegation();
-                        break;
-                }
-            });
-            return DataType.BOOL;
-        }
-        return super.visitExpression(ctx);
-    }
-
-    @Override
-    public DataType visitRelationExpression(NewtonParser.RelationExpressionContext ctx) {
-        if (ctx.simpleExpression().size() > 1) {
-            visitStringOpr(ctx.simpleExpression(), ctx.RelationOp(), res -> {
-                if (res.equals("<")) {
-                    INSTRUCTIONS.add(new Instruction(OperationType.LT));
-                } else if (res.equals("<=")) {
-                    INSTRUCTIONS.add(new Instruction(OperationType.LTE));
-                } else if (res.equals(">")) {
-                    INSTRUCTIONS.add(new Instruction(OperationType.GT));
-                } else if (res.equals(">=")) {
-                    INSTRUCTIONS.add(new Instruction(OperationType.GTE));
-                } else if (res.equals("==")) {
-                    INSTRUCTIONS.add(new Instruction(OperationType.EQ));
-                }
-            });
-            return DataType.BOOL;
-        }
-        return super.visitRelationExpression(ctx);
-    }
-
-    @Override
-    public DataType visitSimpleExpression(NewtonParser.SimpleExpressionContext ctx) {
-        if (ctx.term().size() > 1) {
-            visitIntOpr(ctx.term(), ctx.Add(), ctx.Sub(), res -> {
-                switch (res) {
-                    case NewtonParser.Add:
-                        INSTRUCTIONS.add(new Instruction(OperationType.ADD));
-                        break;
-                    case NewtonParser.Sub:
-                        INSTRUCTIONS.add(new Instruction(OperationType.SUB));
-                        break;
-                }
-            });
-            return DataType.INT;
-        }
-        return super.visitSimpleExpression(ctx);
-    }
-
-    @Override
-    public DataType visitTerm(NewtonParser.TermContext ctx) {
-        if (ctx.factor().isEmpty()) {
-            // TODO zavorky
-            return null;
-        }
-
-        if (ctx.factor().size() > 1) {
-            visitIntOpr(ctx.factor(), ctx.Mul(), ctx.Div(), res -> {
-                switch (res) {
-                    case NewtonParser.Mul:
-                        INSTRUCTIONS.add(new Instruction(OperationType.MUL));
-                        break;
-                    case NewtonParser.Div:
-                        INSTRUCTIONS.add(new Instruction(OperationType.DIV));
-                        break;
-                }
-            });
-            return DataType.INT;
-        }
-
-        return super.visitTerm(ctx);
-    }
-
-    @Override
-    public DataType visitFactor(NewtonParser.FactorContext ctx) {
-        if (ctx.Identifier() != null) {
-            Variable variable = getVariable(ctx.Identifier().getText());
-            if (variable == null) {
-                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
-                return null;
-            }
-            INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variable.getStackPosition()));
-            return variable.getDataType();
-        }
-        return super.visitFactor(ctx);
-    }
-
-    @Override
-    public DataType visitSimpleFactor(NewtonParser.SimpleFactorContext ctx) {
-        if (ctx.Int() != null) {
-            INSTRUCTIONS.add(new Instruction(InstructionType.LIT, ctx.Int().getText()));
-            return DataType.INT;
-        } else if (ctx.Boolean() != null) {
-            INSTRUCTIONS.add(new Instruction(InstructionType.LIT, ctx.Boolean().getText().equals("true") ? 1 : 0));
-            return DataType.BOOL;
-        }
-        return null; // nejnizsi uzel derivacniho stromu
-    }
-
-    @Override
     public DataType visitIfStatement(NewtonParser.IfStatementContext ctx) {
 
         visit(ctx.expression()); // generuj instrukce pro podminku
@@ -598,6 +488,121 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         INSTRUCTIONS.add(jumpPos, new Instruction(InstructionType.JMP, INSTRUCTIONS.size() + 1));
 
         return o3;
+    }
+
+    @Override
+    public DataType visitExpression(NewtonParser.ExpressionContext ctx) {
+        if (ctx.relationExpression().size() > 1) {
+            visitIntOpr(ctx.relationExpression(), ctx.And(), ctx.Or(), res -> {
+                switch (res) {
+                    case NewtonParser.And:
+                        INSTRUCTIONS.add(new Instruction(OperationType.EQ));
+                        break;
+                    case NewtonParser.Or:
+                        INSTRUCTIONS.add(new Instruction(OperationType.ADD));
+                        INSTRUCTIONS.add(new Instruction(InstructionType.LIT, 0));
+                        INSTRUCTIONS.add(new Instruction(OperationType.EQ));
+                        addNegation();
+                        break;
+                }
+            });
+            return DataType.BOOL;
+        }
+        return super.visitExpression(ctx);
+    }
+
+    @Override
+    public DataType visitRelationExpression(NewtonParser.RelationExpressionContext ctx) {
+        if (ctx.simpleExpression().size() > 1) {
+            visitStringOpr(ctx.simpleExpression(), ctx.RelationOp(), res -> {
+                if (res.equals("<")) {
+                    INSTRUCTIONS.add(new Instruction(OperationType.LT));
+                } else if (res.equals("<=")) {
+                    INSTRUCTIONS.add(new Instruction(OperationType.LTE));
+                } else if (res.equals(">")) {
+                    INSTRUCTIONS.add(new Instruction(OperationType.GT));
+                } else if (res.equals(">=")) {
+                    INSTRUCTIONS.add(new Instruction(OperationType.GTE));
+                } else if (res.equals("==")) {
+                    INSTRUCTIONS.add(new Instruction(OperationType.EQ));
+                }
+            });
+            return DataType.BOOL;
+        }
+        return super.visitRelationExpression(ctx);
+    }
+
+    @Override
+    public DataType visitMulDiv(NewtonParser.MulDivContext ctx) {
+
+        DataType left = visit(ctx.simpleExpression(0));
+        DataType right = visit(ctx.simpleExpression(1));
+
+        if (!(left.equals(DataType.INT) || right.equals(DataType.INT))) {
+            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
+            return null;
+        }
+
+        switch (ctx.op.getType()) {
+            case NewtonParser.Mul:
+                INSTRUCTIONS.add(new Instruction(OperationType.MUL));
+                break;
+            case NewtonParser.Div:
+                INSTRUCTIONS.add(new Instruction(OperationType.DIV));
+                break;
+        }
+
+
+        return DataType.INT;
+    }
+
+    @Override
+    public DataType visitAddSub(NewtonParser.AddSubContext ctx) {
+
+        DataType left = visit(ctx.simpleExpression(0));
+        DataType right = visit(ctx.simpleExpression(1));
+
+        if (!(left.equals(DataType.INT) || right.equals(DataType.INT))) {
+            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
+            return null;
+        }
+
+        switch (ctx.op.getType()) {
+            case NewtonParser.Add:
+                INSTRUCTIONS.add(new Instruction(OperationType.ADD));
+                break;
+            case NewtonParser.Sub:
+                INSTRUCTIONS.add(new Instruction(OperationType.SUB));
+                break;
+        }
+
+        return DataType.INT;
+    }
+
+    @Override
+    public DataType visitFactor(NewtonParser.FactorContext ctx) {
+        if (ctx.Identifier() != null) {
+            Variable variable = getVariable(ctx.Identifier().getText());
+            if (variable == null) {
+                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
+                return null;
+            }
+            INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variable.getStackPosition()));
+            return variable.getDataType();
+        }
+        return super.visitFactor(ctx);
+    }
+
+    @Override
+    public DataType visitSimpleFactor(NewtonParser.SimpleFactorContext ctx) {
+        if (ctx.Int() != null) {
+            INSTRUCTIONS.add(new Instruction(InstructionType.LIT, ctx.Int().getText()));
+            return DataType.INT;
+        } else if (ctx.Boolean() != null) {
+            INSTRUCTIONS.add(new Instruction(InstructionType.LIT, ctx.Boolean().getText().equals("true") ? 1 : 0));
+            return DataType.BOOL;
+        }
+        return null; // nejnizsi uzel derivacniho stromu
     }
 
     private void addNegation() {

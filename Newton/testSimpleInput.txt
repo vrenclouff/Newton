@@ -2,15 +2,6 @@ constant:
 variable:
     int a;
 
-fnc void test()
-    if a == 2 then
-            a = 8;
-        else
-            a = 7;
-        endif
-end
-
 main()
-    a = 2;
-    test();
+    a = 5 * (4 + 2);
 end

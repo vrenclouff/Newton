@@ -99,12 +99,12 @@ expression // done
 relationExpression // done
     : simpleExpression (RelationOp simpleExpression)*;
 
-simpleExpression // done
-    : term ((Add | Sub) term)*;
-
-term // done
-    : factor ((Mul | Div) factor)*
-    | RoundBracketLeft simpleExpression RoundBracketRight ((Add | Sub | Mul | Div) simpleExpression)?;
+simpleExpression
+    : factor                                                # Term
+    | simpleExpression op=(Mul | Div) simpleExpression      # MulDiv
+    | simpleExpression op=(Add | Sub) simpleExpression      # AddSub
+    | RoundBracketLeft simpleExpression RoundBracketRight   # Parents
+    ;
 
 factor // done
     : simpleFactor

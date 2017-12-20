@@ -184,13 +184,29 @@ public interface NewtonVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitRelationExpression(NewtonParser.RelationExpressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link NewtonParser#simpleExpression}.
+	 * Visit a parse tree produced by the {@code MulDiv}
+	 * labeled alternative in {@link NewtonParser#simpleExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSimpleExpression(NewtonParser.SimpleExpressionContext ctx);
+	T visitMulDiv(NewtonParser.MulDivContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link NewtonParser#term}.
+	 * Visit a parse tree produced by the {@code AddSub}
+	 * labeled alternative in {@link NewtonParser#simpleExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAddSub(NewtonParser.AddSubContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Parents}
+	 * labeled alternative in {@link NewtonParser#simpleExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParents(NewtonParser.ParentsContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Term}
+	 * labeled alternative in {@link NewtonParser#simpleExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
