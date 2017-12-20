@@ -1,16 +1,17 @@
 constant:
 variable:
     int a;
-    int b;
-    int c;
 
-fnc void callWhile()
-    while a < 5 do
-        a = a + 1;
-    endwhile
+fnc void testSwitch()
+    switch a of
+       2: a = a * 2;
+       3: a = a * 3;
+       4: a = a * 4;
+       default: a = 0;
+   endswitch
 end
 
 main()
-   a = 3;
-   callWhile();
+    a = 4;
+    testSwitch();
 end

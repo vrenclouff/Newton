@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 
 public class MainVisitor extends NewtonBaseVisitor<DataType> {
@@ -446,31 +447,46 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
     @Override
     public DataType visitSwitchStatement(NewtonParser.SwitchStatementContext ctx) {
-        List<Integer> jumpEndPositions = new ArrayList<>();
 
-        for (int i = 0; i < ctx.caseStatement().size(); i++) {
-            visit(ctx.simpleExpression());
+        DataType switchParam = visit(ctx.simpleExpression());
 
-            INSTRUCTIONS.add(new Instruction(InstructionType.LIT, ctx.caseStatement(i).Int()+""));
+        if (!switchParam.equals(DataType.INT)) {
+            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
+            return null;
+        }
+
+        Variable tempVar = VARIABLES.get("#");
+        INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, tempVar.getStackPosition()));
+
+        Instruction jmp = new Instruction(InstructionType.JMP, 0); // skok za switch
+
+        ctx.caseStatement().forEach(caseStatement -> {
+
+            // nacti hodnotu switche
+            INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, tempVar.getStackPosition()));
+
+            // nacti hodnotu case
+            INSTRUCTIONS.add(new Instruction(InstructionType.LIT, caseStatement.Int().getText()));
+
+            // porovnej
             INSTRUCTIONS.add(new Instruction(OperationType.EQ));
 
-            int position = INSTRUCTIONS.size();
-            visit(ctx.caseStatement(i));
+            // podminey skok - pokud se rovnaji, vykonej case, kdyz ne skoc na dalsi case
+            Instruction jmc = new Instruction(InstructionType.JMC, 0);
+            INSTRUCTIONS.add(jmc);
 
-            jumpEndPositions.add(INSTRUCTIONS.size()+1+i);
+            visit(caseStatement);
 
-            int pos = INSTRUCTIONS.size() + i + 2;
-            // TODO nemuzem pousouvat indexy
-            INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, pos));
-        }
+            // vyskoc ze switche
+            INSTRUCTIONS.add(jmp);
+
+            // adresa pri skoku na dalsi case
+            jmc.setValue(INSTRUCTIONS.size());
+        });
 
         visit(ctx.statement()); // default
 
-        int endJump = INSTRUCTIONS.size() + jumpEndPositions.size();
-        for (Integer i : jumpEndPositions) {
-            // TODO nemuzem pousouvat indexy
-            INSTRUCTIONS.add(i, new Instruction(InstructionType.JMP, endJump));
-        }
+        jmp.setValue(INSTRUCTIONS.size());
 
         return null;
     }
