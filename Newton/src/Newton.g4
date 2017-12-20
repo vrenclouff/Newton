@@ -30,7 +30,7 @@ functionStatement
 tag
     : baseType Identifier (Comma baseType Identifier)*;
 
-baseType
+baseType // done
     : IntType
     | BoolType;
 
@@ -50,7 +50,7 @@ multipleAssignmentStatement // done
 parallelAssignmentStatement // done
     : CurlyBracketLeft Identifier (',' Identifier)* CurlyBracketRight Assign CurlyBracketLeft simpleFactor (',' simpleFactor)* CurlyBracketRight Semi;
 
-callFunctionStatement
+callFunctionStatement // done
     : (Identifier Assign)? Identifier RoundBracketLeft parameterList? RoundBracketRight Semi;
 
 parameterList
@@ -71,17 +71,17 @@ forStatement
 doWhileStatement // done
     : Do statement* BeginWhile expression;
 
-repeatUntilStatement
+repeatUntilStatement // done
     : Repeat statement* Until expression;
 
-conditionalStatement
+conditionalStatement // done
     : ifStatement
     | switchStatement;
 
 switchStatement // done
     : BeginSwitch simpleExpression Of caseStatement+ DefaultSwitch Colon statement EndSwitch;
 
-caseStatement
+caseStatement // done
     : Int Colon statement; // muze byt vice statements v case ??
 
 ifStatement // done
@@ -90,7 +90,7 @@ ifStatement // done
 elseStatement // done
     : Else statement*;
 
-ternaryStatement
+ternaryStatement // done
     : expression Ques expression Colon expression;
 
 expression // done
@@ -99,7 +99,7 @@ expression // done
 relationExpression // done
     : simpleExpression (RelationOp simpleExpression)*;
 
-simpleExpression
+simpleExpression // done
     : factor                                                # Term
     | simpleExpression op=(Mul | Div) simpleExpression      # MulDiv
     | simpleExpression op=(Add | Sub) simpleExpression      # AddSub

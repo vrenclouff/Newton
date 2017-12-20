@@ -395,6 +395,64 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
     }
 
     @Override
+    public DataType visitForStatement(NewtonParser.ForStatementContext ctx) {
+
+        Variable variable;
+
+        if (ctx.Identifier() != null) {
+            variable = VARIABLES.get(ctx.Identifier().getText());
+
+            if (variable == null) {
+                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
+                return null;
+            }
+
+        } else {
+            variable = VARIABLES.get("#");
+        }
+
+        // vytvor instrukce pro pocatecni hodnotu
+        DataType startType = visit(ctx.factor(0));
+
+        if (!startType.equals(DataType.INT)) {
+            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
+            return null;
+        }
+
+        INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
+
+        int iterationJump = INSTRUCTIONS.size();
+
+        INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variable.getStackPosition()));
+
+        DataType endType = visit(ctx.factor(1));
+
+        if (!endType.equals(DataType.INT)) {
+            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
+            return null;
+        }
+
+        INSTRUCTIONS.add(new Instruction(OperationType.LTE));
+
+        Instruction jmc = new Instruction(InstructionType.JMC, 0);
+        INSTRUCTIONS.add(jmc);
+
+        // vytvor obsah foru
+        ctx.statement().forEach(this::visit);
+
+        INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variable.getStackPosition()));
+        String increment = ctx.Int() != null ? ctx.Int().getText() : "1";
+        INSTRUCTIONS.add(new Instruction(InstructionType.LIT, increment));
+        INSTRUCTIONS.add(new Instruction(OperationType.ADD));
+        INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
+        INSTRUCTIONS.add(new Instruction(InstructionType.JMP, iterationJump));
+
+        jmc.setValue(INSTRUCTIONS.size());
+
+        return null;
+    }
+
+    @Override
     public DataType visitWhileStatement(NewtonParser.WhileStatementContext ctx) {
 
         int iterationJump = INSTRUCTIONS.size();

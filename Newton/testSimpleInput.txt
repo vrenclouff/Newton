@@ -1,17 +1,16 @@
 constant:
 variable:
     int a;
+    int b;
 
-fnc void testSwitch()
-    switch a of
-       2: a = a * 2;
-       3: a = a * 3;
-       4: a = a * 4;
-       default: a = 0;
-   endswitch
+fnc int funcFor()
+    for b = 2:5:2 do
+        a = a * 2;
+    endfor
+    return b;
 end
 
 main()
-    a = 4;
-    testSwitch();
+    a = 2;
+    a = funcFor();
 end
