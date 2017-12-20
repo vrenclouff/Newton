@@ -4,10 +4,22 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.IntStream;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class MainVisitor extends NewtonBaseVisitor<DataType> {
+
+    private class VariableWrapper {
+        Variable variable;
+        int level;
+
+        public VariableWrapper(Variable variable, int level) {
+            this.variable = variable;
+            this.level = level;
+        }
+    }
 
     /*
      * Aktivacni zaznam
@@ -38,6 +50,8 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
     /* Aktualni uroven zanoreni */
     private int level = 0;
 
+    private Map<String, Variable> VARIABLES_TEMP = Collections.EMPTY_MAP;
+
     private Instruction jmpToMain = new Instruction(InstructionType.JMP, 0);
 
     public List<Instruction> getInstructions() {
@@ -52,14 +66,21 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         return VARIABLES.containsKey(name) || CONSTANTS.containsKey(name);
     }
 
-    private Variable getVariable(String variableName) {
-        if (CONSTANTS.containsKey(variableName)) {
-            return CONSTANTS.get(variableName);
+    private VariableWrapper getVariable(String variableName) {
+        if (VARIABLES_TEMP.containsKey(variableName)) {
+            return new VariableWrapper(VARIABLES_TEMP.get(variableName), 0);
         } else if (VARIABLES.containsKey(variableName)) {
-            return VARIABLES.get(variableName);
+            return new VariableWrapper(VARIABLES.get(variableName), level);
         } else {
             return null;
         }
+    }
+
+    private VariableWrapper getVariableConstant(String variableName) {
+        if (CONSTANTS.containsKey(variableName)) {
+            return new VariableWrapper(CONSTANTS.get(variableName), level);
+        }
+        return getVariable(variableName);
     }
 
     private void visitIntOpr(List nonterminals,
@@ -218,17 +239,17 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
         for (int i = 0; i < ctx.Identifier().size(); i++) {
 
-            Variable variable = VARIABLES.get(ctx.Identifier().get(i).getText());
+            VariableWrapper variableWrapper = getVariable(ctx.Identifier().get(i).getText());
 
-            if (variable == null) {
+            if (variableWrapper == null) {
                 MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
                 return null;
             }
 
             DataType type =  visit(ctx.simpleFactor().get(i));
 
-            if (type.equals(variable.getDataType())) {
-                INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
+            if (type.equals(variableWrapper.variable.getDataType())) {
+                INSTRUCTIONS.add(new Instruction(InstructionType.STO, variableWrapper.level, variableWrapper.variable.getStackPosition()));
             } else {
                 MESSAGES.add(MessageUtil.create(MessageType.WRONG_INITIALIZE, ctx));
             }
@@ -249,8 +270,17 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         }
 
         DataType returnType = ctx.baseType() != null ? (ctx.baseType().IntType() != null ? DataType.INT : DataType.BOOL) : DataType.VOID;
+        Variable[] params = ctx.tag() != null ? new Variable[ctx.tag().baseType().size()] : new Variable[0];
 
-        FUNCTIONS.put(name, new FunctionDefinition(name, INSTRUCTIONS.size(), returnType));
+        for(int i = 0; i < params.length; i++) {
+            String varName = ctx.tag().Identifier(i).getText();
+            DataType varType = ctx.tag().baseType(i).IntType() != null ? DataType.INT : DataType.BOOL;
+            params[i] = new Variable(varName, varType, -(params.length-i));
+        }
+
+        VARIABLES_TEMP = Stream.of(params).collect(Collectors.toMap(Variable::getName, Function.identity()));
+
+        FUNCTIONS.put(name, new FunctionDefinition(name, INSTRUCTIONS.size(), returnType, params));
 
         // vytvor aktivacni zaznam
         int spaceAtStack = ACTIVATION_RECORD_SIZE + 0; // 0 pocet parametru
@@ -268,10 +298,13 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             }
 
             // uloz return hodnotu do pripraveneho mista na zasobniku
-            INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, VARIABLES.get("#").getStackPosition()));
+            VariableWrapper variableWrapper = getVariable("#");
+            INSTRUCTIONS.add(new Instruction(InstructionType.STO, variableWrapper.level, variableWrapper.variable.getStackPosition()));
         }
 
         INSTRUCTIONS.add(new Instruction(InstructionType.RET, 0));
+
+        VARIABLES_TEMP = Collections.EMPTY_MAP;
 
         level--;
         return returnType;
@@ -290,24 +323,44 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             return null;
         }
 
+        int paramsCount = ctx.parameterList() != null ? ctx.parameterList().expression().size() : 0;
+
+        if (function.getParams().length != paramsCount) {
+            MESSAGES.add(MessageUtil.create(MessageType.WRONG_PARAMS_COUNT, ctx));
+            return null;
+        }
+
+        for (int param = 0; param < paramsCount; param++) {
+            DataType paramType = visit(ctx.parameterList().expression(param));
+            if (!function.getParams()[param].getDataType().equals(paramType)) {
+                MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
+                return null;
+            }
+        }
+
         INSTRUCTIONS.add(new Instruction(InstructionType.CAL, function.getAddress()));
+
+        if (paramsCount != 0) {
+            INSTRUCTIONS.add(new Instruction(InstructionType.INT, -paramsCount));
+        }
 
         if (isAssign) {
 
-            Variable variable = VARIABLES.get(ctx.Identifier(0).getText());
+            VariableWrapper variableWrapper = getVariable(ctx.Identifier(0).getText());
 
-            if (variable == null) {
+            if (variableWrapper == null) {
                 MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
                 return null;
             }
 
-            if (!variable.getDataType().equals(function.getReturnType())) {
+            if (!variableWrapper.variable.getDataType().equals(function.getReturnType())) {
                 MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
                 return null;
             }
 
-            INSTRUCTIONS.add(new Instruction(InstructionType.LOD,  VARIABLES.get("#").getStackPosition()));
-            INSTRUCTIONS.add(new Instruction(InstructionType.STO, variable.getStackPosition()));
+            VariableWrapper variableTemp = getVariable("#");
+            INSTRUCTIONS.add(new Instruction(InstructionType.LOD,variableTemp.level, variableTemp.variable.getStackPosition()));
+            INSTRUCTIONS.add(new Instruction(InstructionType.STO, variableWrapper.level, variableWrapper.variable.getStackPosition()));
 
         }
 
@@ -323,38 +376,38 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             return null;
         }
 
-        Variable variable = VARIABLES.get(variableName);
+        VariableWrapper variableWrapper = getVariable(variableName);
 
-        if (variable == null) {
+        if (variableWrapper == null) {
             MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
             return null;
         }
 
         DataType result = ctx.expression() != null ? visit(ctx.expression()) : visit(ctx.ternaryStatement());
 
-        if (!variable.getDataType().equals(result)) {
+        if (!variableWrapper.variable.getDataType().equals(result)) {
             MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
             return null;
         }
 
-        INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
+        INSTRUCTIONS.add(new Instruction(InstructionType.STO, variableWrapper.level, variableWrapper.variable.getStackPosition()));
 
         ctx.multipleAssignmentStatement().forEach(e -> {
 
-            Variable var = VARIABLES.get(e.Identifier().getText());
+            VariableWrapper varWrapper = getVariable(e.Identifier().getText());
 
-            if (var == null) {
+            if (varWrapper == null) {
                 MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
                 return;
             }
 
-            if (!var.getDataType().equals(result)) {
+            if (!varWrapper.variable.getDataType().equals(result)) {
                 MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
                 return;
             }
 
-            INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variable.getStackPosition()));
-            INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, var.getStackPosition()));
+            INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variableWrapper.variable.getStackPosition()));
+            INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, varWrapper.variable.getStackPosition()));
         });
 
         return result;
@@ -364,9 +417,6 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
     public DataType visitIfStatement(NewtonParser.IfStatementContext ctx) {
 
         visit(ctx.expression()); // generuj instrukce pro podminku
-
-       // int position = INSTRUCTIONS.size();
-
 
         Instruction jmc = new Instruction(InstructionType.JMC, 0);
         INSTRUCTIONS.add(jmc);
@@ -397,18 +447,18 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
     @Override
     public DataType visitForStatement(NewtonParser.ForStatementContext ctx) {
 
-        Variable variable;
+        VariableWrapper variableWrapper;
 
         if (ctx.Identifier() != null) {
-            variable = VARIABLES.get(ctx.Identifier().getText());
+            variableWrapper = getVariable(ctx.Identifier().getText());
 
-            if (variable == null) {
+            if (variableWrapper == null) {
                 MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
                 return null;
             }
 
         } else {
-            variable = VARIABLES.get("#");
+            variableWrapper = getVariable("#");
         }
 
         // vytvor instrukce pro pocatecni hodnotu
@@ -419,11 +469,11 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             return null;
         }
 
-        INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
+        INSTRUCTIONS.add(new Instruction(InstructionType.STO, variableWrapper.level, variableWrapper.variable.getStackPosition()));
 
         int iterationJump = INSTRUCTIONS.size();
 
-        INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variable.getStackPosition()));
+        INSTRUCTIONS.add(new Instruction(InstructionType.LOD, variableWrapper.level, variableWrapper.variable.getStackPosition()));
 
         DataType endType = visit(ctx.factor(1));
 
@@ -440,11 +490,11 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         // vytvor obsah foru
         ctx.statement().forEach(this::visit);
 
-        INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variable.getStackPosition()));
+        INSTRUCTIONS.add(new Instruction(InstructionType.LOD, variableWrapper.level, variableWrapper.variable.getStackPosition()));
         String increment = ctx.Int() != null ? ctx.Int().getText() : "1";
         INSTRUCTIONS.add(new Instruction(InstructionType.LIT, increment));
         INSTRUCTIONS.add(new Instruction(OperationType.ADD));
-        INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
+        INSTRUCTIONS.add(new Instruction(InstructionType.STO, variableWrapper.level, variableWrapper.variable.getStackPosition()));
         INSTRUCTIONS.add(new Instruction(InstructionType.JMP, iterationJump));
 
         jmc.setValue(INSTRUCTIONS.size());
@@ -513,15 +563,15 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             return null;
         }
 
-        Variable tempVar = VARIABLES.get("#");
-        INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, tempVar.getStackPosition()));
+        VariableWrapper tempVar = getVariable("#");
+        INSTRUCTIONS.add(new Instruction(InstructionType.STO, tempVar.level, tempVar.variable.getStackPosition()));
 
         Instruction jmp = new Instruction(InstructionType.JMP, 0); // skok za switch
 
         ctx.caseStatement().forEach(caseStatement -> {
 
             // nacti hodnotu switche
-            INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, tempVar.getStackPosition()));
+            INSTRUCTIONS.add(new Instruction(InstructionType.LOD, tempVar.level, tempVar.variable.getStackPosition()));
 
             // nacti hodnotu case
             INSTRUCTIONS.add(new Instruction(InstructionType.LIT, caseStatement.Int().getText()));
@@ -642,7 +692,6 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
                 break;
         }
 
-
         return DataType.INT;
     }
 
@@ -672,13 +721,13 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
     @Override
     public DataType visitFactor(NewtonParser.FactorContext ctx) {
         if (ctx.Identifier() != null) {
-            Variable variable = getVariable(ctx.Identifier().getText());
-            if (variable == null) {
+            VariableWrapper variableWrapper = getVariableConstant(ctx.Identifier().getText());
+            if (variableWrapper == null) {
                 MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
                 return null;
             }
-            INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variable.getStackPosition()));
-            return variable.getDataType();
+            INSTRUCTIONS.add(new Instruction(InstructionType.LOD, variableWrapper.level, variableWrapper.variable.getStackPosition()));
+            return variableWrapper.variable.getDataType();
         }
         return super.visitFactor(ctx);
     }

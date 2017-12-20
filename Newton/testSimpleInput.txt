@@ -3,14 +3,12 @@ variable:
     int a;
     int b;
 
-fnc int funcFor()
-    for b = 2:5:2 do
-        a = a * 2;
-    endfor
+fnc int callFunction(int b, int c)
+    b = a + c;
     return b;
 end
 
 main()
-    a = 2;
-    a = funcFor();
+    a = 5;
+    a = callFunction(10, 20);
 end
