@@ -259,7 +259,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
         if (!returnType.equals(DataType.VOID)) {
             // funce ma navratovy typ
-            DataType type = visit(ctx.expression());
+            DataType type = ctx.expression() != null ? visit(ctx.expression()) : visit(ctx.ternaryStatement());
 
             if (!returnType.equals(type)) {
                 MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
@@ -471,35 +471,35 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         return null;
     }
 
-
-    // TODO: Kontrola typu pri prirazeni
     @Override
     public DataType visitTernaryStatement(NewtonParser.TernaryStatementContext ctx) {
-        DataType o1 = visit(ctx.expression(0));
-        if (o1 != DataType.BOOL) {
+
+        DataType conditional = visit(ctx.expression(0));
+        if (conditional != DataType.BOOL) {
             MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
             return null;
         }
 
-        int position = INSTRUCTIONS.size();
+        Instruction jmc = new Instruction(InstructionType.JMC, 0);
+        INSTRUCTIONS.add(jmc);
 
-        DataType o2 = visit(ctx.expression(1));
+        DataType trueExpression = visit(ctx.expression(1));
 
-        int jumpPos = INSTRUCTIONS.size()+1;
+        Instruction jmp = new Instruction(InstructionType.JMP, 0);
+        INSTRUCTIONS.add(jmp);
 
-        // TODO nemuzem pousouvat indexy
-        INSTRUCTIONS.add(position, new Instruction(InstructionType.JMC, INSTRUCTIONS.size() + 2));
+        jmc.setValue(INSTRUCTIONS.size());
 
-        DataType o3 = visit(ctx.expression(2));
-        if (o2 != o3) {
+        DataType falseExpression =  visit(ctx.expression(2));
+
+        jmp.setValue(INSTRUCTIONS.size());
+
+        if (!trueExpression.equals(falseExpression)) {
             MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
             return null;
         }
 
-        // TODO nemuzem pousouvat indexy
-        INSTRUCTIONS.add(jumpPos, new Instruction(InstructionType.JMP, INSTRUCTIONS.size() + 1));
-
-        return o3;
+        return trueExpression;
     }
 
     @Override
@@ -520,8 +520,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             });
             return DataType.BOOL;
         }
-        DataType res = super.visitExpression(ctx);
-        return res;
+        return super.visitExpression(ctx);
     }
 
     @Override

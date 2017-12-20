@@ -25,7 +25,7 @@ mainStatement // done
 
 functionStatement
     : BeginFunction VoidType Identifier RoundBracketLeft tag? RoundBracketRight statement* EndBlock
-    | BeginFunction baseType Identifier RoundBracketLeft tag? RoundBracketRight statement* ReturnFunctin expression Semi EndBlock;
+    | BeginFunction baseType Identifier RoundBracketLeft tag? RoundBracketRight statement* ReturnFunctin (expression | ternaryStatement) Semi EndBlock;
 
 tag
     : baseType Identifier (Comma baseType Identifier)*;

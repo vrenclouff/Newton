@@ -4,6 +4,12 @@ variable:
     int b;
     int c;
 
+fnc int getTrue()
+    return a < 2 ? 7 : 8;
+end
+
 main()
-    a = b = c = 55;
+   a = 3;
+   b = 2;
+   c = getTrue();
 end
