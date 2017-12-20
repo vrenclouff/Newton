@@ -329,14 +329,26 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             return null;
         }
 
-        DataType result = super.visitAssignmentStatement(ctx);
+        DataType result = ctx.expression() != null ? visit(ctx.expression()) : visit(ctx.ternaryStatement());
+
+        if (!variable.getDataType().equals(result)) {
+            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
+            return null;
+        }
 
         INSTRUCTIONS.add(new Instruction(InstructionType.STO, level, variable.getStackPosition()));
 
         ctx.multipleAssignmentStatement().forEach(e -> {
+
             Variable var = VARIABLES.get(e.Identifier().getText());
+
             if (var == null) {
                 MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
+                return;
+            }
+
+            if (!var.getDataType().equals(result)) {
+                MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
                 return;
             }
 
@@ -508,7 +520,8 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             });
             return DataType.BOOL;
         }
-        return super.visitExpression(ctx);
+        DataType res = super.visitExpression(ctx);
+        return res;
     }
 
     @Override
@@ -602,7 +615,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             INSTRUCTIONS.add(new Instruction(InstructionType.LIT, ctx.Boolean().getText().equals("true") ? 1 : 0));
             return DataType.BOOL;
         }
-        return null; // nejnizsi uzel derivacniho stromu
+        return DataType.VOID; // nejnizsi uzel derivacniho stromu
     }
 
     private void addNegation() {

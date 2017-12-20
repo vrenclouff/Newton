@@ -1,7 +1,9 @@
 constant:
 variable:
     int a;
+    int b;
+    int c;
 
 main()
-    a = 5 * (4 + 2);
+    a = b = c = 55;
 end
