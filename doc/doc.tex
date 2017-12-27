@@ -1,0 +1,130 @@
+\documentclass{style}
+\usepackage[utf8]{inputenc} 
+\usepackage[czech]{babel}
+\usepackage{ae}
+\usepackage{url}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{array,tabularx}
+\usepackage{graphicx}
+\usepackage{float}
+
+\author{Lukáš Černý, Štěpán Baratta}
+\title{Překladač navrženého jazyka Newton}
+\titlet{}
+\titlett{}
+\university{Západočeská univerzita v Plzni}
+\faculty{Fakulta aplikovaných věd}
+\department{Katedra informatiky a výpočetní techniky}
+\subject{Semestrální práce z KIV/FJP}
+\town{Plzeň}
+
+\begin{document}
+
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{\textit{#1}}{}}
+\renewcommand{\sectionmark}[1]{\markright{\textit{#1}}{}}
+\cfoot{\thepage}
+\lhead{\leftmark}
+\rhead{\rightmark}
+\maketitle
+
+\tableofcontents
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{\textit{#1}}{}}
+\renewcommand{\sectionmark}[1]{\markright{\textit{#1}}{}}
+\cfoot{\thepage}
+\lhead{\leftmark}
+\rhead{\rightmark}
+\parskip 1em
+
+\chapter{Členové týmu}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c}
+Jméno & Studijní číslo & Email \\
+\hline
+Lukáš Černý & xxxx & xxxx \\
+Štěpán Baratta & A17N0061P & BarattaStepan@gmail.com \\
+\end{tabular}
+\end{table}
+
+Odkaz na Github: xxx
+
+\chapter{Zadání}
+Cílem této semestrální práce je vytvoření překladače vlastního nebo již existujícího jazyka. Dále je nutné zvolit, pro jakou architekturu bude jazyk překládán.
+
+Mezi základní podmínky, které jazyk musí splňovat, jsou následující konstrukce:
+
+\begin{itemize}
+\item definice celočíselných proměnných \\
+\item definice celočíselných konstant \\
+\item přiřazení \\
+\item základní aritmetiku a logiku \verb|(+, -, *, /, AND, OR, negace a závorky, relační operátory)| \\
+\item cyklus (libovolný) \\
+\item jednoduchou podmínku (if bez else) \\
+\item definice podprogramu (procedura, funkce, metoda) a jeho volání \\
+\end{itemize}
+
+\chapter{Popis řešení}
+Program je implementován v programovacím jazyce Java. Pro vytvoření lexikálního analyzátoru a parseru je použita knihovna ANTLR.
+
+\section{ANTLR}
+Obecný postup při vytváření překladače pomocí ANTLR
+Nejdříve je potřeba vytvořit gramatiku, která bude popisovat zvolený programovací jazyk. Obsahuje tedy lexikální a parsovací pravidla. Z nich ANTLR vytvoří lexikální analyzátor, který čte vstupní text a rozdělí ho na jednotlivé části (tokeny). Dále jsou tyto tokeny předány parseru, který vytváří abstraktní syntaktický strom a interpretuje kód.
+
+\section{Gramatika}
+
+\section{Visitor}
+Abstraktní syntaktický strom, který generuje ANTLR je procházen pomocí návrhového vzoru Visitor, kdy jednotlivé uzly stromu jsou postupně navštěvovány zleva doprava.
+
+\chapter{Implementace}
+
+
+
+\section{Vzorové programy}
+\begin{lstlisting}[frame=single]  % Start your code-block
+constant:
+variable:
+    int a;
+
+    fnc int pocitej(int c, int d)
+        for 1 : c : 2 do
+            d = d * (5 + 5);
+        endfor
+
+        return d;
+    end
+
+main()
+    a = pocitej(4, 1);
+end
+\end{lstlisting}
+
+\begin{lstlisting}[frame=single]  % Start your code-block
+
+constant:
+variable:
+    bool a;
+    bool result;
+
+    fnc bool pocitej(int d)
+        switch d of
+            0: result = false;
+            5: result = true;
+            default: result = false;
+        endswitch
+
+        return result;
+    end
+
+main()
+    a = pocitej(5);
+end
+\end{lstlisting}
+
+\chapter{Závěr}
+
+\end{document}
