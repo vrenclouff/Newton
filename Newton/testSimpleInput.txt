@@ -1,14 +1,7 @@
 constant:
 variable:
     int a;
-    int b;
-
-fnc int callFunction(int b, int c)
-    b = a + c;
-    return b;
-end
 
 main()
-    a = 5;
-    a = callFunction(10, 20);
+    a = (4 + 3) * 10;
 end

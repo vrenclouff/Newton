@@ -696,6 +696,11 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
     }
 
     @Override
+    public DataType visitParents(NewtonParser.ParentsContext ctx) {
+        return visit(ctx.simpleExpression());
+    }
+
+    @Override
     public DataType visitAddSub(NewtonParser.AddSubContext ctx) {
 
         DataType left = visit(ctx.simpleExpression(0));
