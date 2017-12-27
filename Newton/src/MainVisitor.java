@@ -45,7 +45,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
     private final Map<String, Variable> CONSTANTS = new HashMap<>();
 
     /* Hlasky pri preklady (ERROR, WARNING, atd..) */
-    private final List<String> MESSAGES = new LinkedList<>();
+    //private final List<String> MESSAGES = new LinkedList<>();
 
     /* Aktualni uroven zanoreni */
     private int level = 0;
@@ -56,10 +56,6 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
     public List<Instruction> getInstructions() {
         return INSTRUCTIONS;
-    }
-
-    public List<String> getMessages() {
-        return MESSAGES;
     }
 
     private boolean isVariableDeclared(String name) {
@@ -135,8 +131,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
     public DataType visitMainStatement(NewtonParser.MainStatementContext ctx) {
 
         if (ctx.statement().isEmpty()) {
-            MESSAGES.add(MessageUtil.create(MessageType.EMPTY_MAIN, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.EMPTY_MAIN, ctx));
         }
 
         jmpToMain.setValue(INSTRUCTIONS.size());
@@ -171,15 +166,13 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         String variableName = ctx.Identifier().getText();
 
         if (variableName.length() > MAX_IDENTIFIER_LENGTH) {
-            MESSAGES.add(MessageUtil.create(MessageType.OVERFLOWED_IDENTIFIER, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.OVERFLOWED_IDENTIFIER, ctx));
         }
 
         String type = ctx.baseType().getText();
 
         if (isVariableDeclared(variableName)) {
-            MESSAGES.add(MessageUtil.create(MessageType.VARIABLE_IS_DECLARED, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.VARIABLE_IS_DECLARED, ctx));
         }
 
         int position = VARIABLES.size() + CONSTANTS.size() + ACTIVATION_RECORD_SIZE;
@@ -198,13 +191,11 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         String variableName = ctx.Identifier().getText();
 
         if (variableName.length() > MAX_IDENTIFIER_LENGTH) {
-            MESSAGES.add(MessageUtil.create(MessageType.OVERFLOWED_IDENTIFIER, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.OVERFLOWED_IDENTIFIER, ctx));
         }
 
         if (isVariableDeclared(variableName)) {
-            MESSAGES.add(MessageUtil.create(MessageType.CONSTANT_IS_DECLARED, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.CONSTANT_IS_DECLARED, ctx));
         }
 
         Variable variable = null;
@@ -233,8 +224,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
     public DataType visitParallelAssignmentStatement(NewtonParser.ParallelAssignmentStatementContext ctx) {
 
         if (ctx.Identifier().size() != ctx.simpleFactor().size()) {
-            MESSAGES.add(MessageUtil.create(MessageType.PARALLEL_WRONG_OPERAND_SIZE, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.PARALLEL_WRONG_OPERAND_SIZE, ctx));
         }
 
         for (int i = 0; i < ctx.Identifier().size(); i++) {
@@ -242,8 +232,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             VariableWrapper variableWrapper = getVariable(ctx.Identifier().get(i).getText());
 
             if (variableWrapper == null) {
-                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
-                return null;
+                throw new GrammarException(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
             }
 
             DataType type =  visit(ctx.simpleFactor().get(i));
@@ -251,7 +240,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             if (type.equals(variableWrapper.variable.getDataType())) {
                 INSTRUCTIONS.add(new Instruction(InstructionType.STO, variableWrapper.level, variableWrapper.variable.getStackPosition()));
             } else {
-                MESSAGES.add(MessageUtil.create(MessageType.WRONG_INITIALIZE, ctx));
+                throw new GrammarException(MessageUtil.create(MessageType.WRONG_INITIALIZE, ctx));
             }
         }
 
@@ -265,8 +254,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         String name = ctx.Identifier().getText();
 
         if (name.length() > MAX_IDENTIFIER_LENGTH) {
-            MESSAGES.add(MessageUtil.create(MessageType.OVERFLOWED_IDENTIFIER, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.OVERFLOWED_IDENTIFIER, ctx));
         }
 
         DataType returnType = ctx.baseType() != null ? (ctx.baseType().IntType() != null ? DataType.INT : DataType.BOOL) : DataType.VOID;
@@ -293,8 +281,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             DataType type = ctx.expression() != null ? visit(ctx.expression()) : visit(ctx.ternaryStatement());
 
             if (!returnType.equals(type)) {
-                MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
-                return null;
+                throw new GrammarException(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
             }
 
             // uloz return hodnotu do pripraveneho mista na zasobniku
@@ -319,22 +306,19 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         FunctionDefinition function = FUNCTIONS.get(fncName);
 
         if (function == null) {
-            MESSAGES.add(MessageUtil.create(MessageType.UNKNOWN_FUNCTION, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.UNKNOWN_FUNCTION, ctx));
         }
 
         int paramsCount = ctx.parameterList() != null ? ctx.parameterList().expression().size() : 0;
 
         if (function.getParams().length != paramsCount) {
-            MESSAGES.add(MessageUtil.create(MessageType.WRONG_PARAMS_COUNT, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.WRONG_PARAMS_COUNT, ctx));
         }
 
         for (int param = 0; param < paramsCount; param++) {
             DataType paramType = visit(ctx.parameterList().expression(param));
             if (!function.getParams()[param].getDataType().equals(paramType)) {
-                MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
-                return null;
+                throw new GrammarException(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
             }
         }
 
@@ -349,13 +333,11 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             VariableWrapper variableWrapper = getVariable(ctx.Identifier(0).getText());
 
             if (variableWrapper == null) {
-                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
-                return null;
+                throw new GrammarException(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
             }
 
             if (!variableWrapper.variable.getDataType().equals(function.getReturnType())) {
-                MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
-                return null;
+                throw new GrammarException(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
             }
 
             VariableWrapper variableTemp = getVariable("#");
@@ -372,22 +354,19 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         String variableName = ctx.Identifier().getText();
 
         if (CONSTANTS.containsKey(variableName)) {
-            MESSAGES.add(MessageUtil.create(MessageType.CONSTANT_INITIALIZE, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.CONSTANT_INITIALIZE, ctx));
         }
 
         VariableWrapper variableWrapper = getVariable(variableName);
 
         if (variableWrapper == null) {
-            MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
         }
 
         DataType result = ctx.expression() != null ? visit(ctx.expression()) : visit(ctx.ternaryStatement());
 
         if (!variableWrapper.variable.getDataType().equals(result)) {
-            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
         }
 
         INSTRUCTIONS.add(new Instruction(InstructionType.STO, variableWrapper.level, variableWrapper.variable.getStackPosition()));
@@ -397,13 +376,11 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             VariableWrapper varWrapper = getVariable(e.Identifier().getText());
 
             if (varWrapper == null) {
-                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
-                return;
+                throw new GrammarException(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
             }
 
             if (!varWrapper.variable.getDataType().equals(result)) {
-                MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
-                return;
+                throw new GrammarException(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
             }
 
             INSTRUCTIONS.add(new Instruction(InstructionType.LOD, level, variableWrapper.variable.getStackPosition()));
@@ -453,8 +430,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             variableWrapper = getVariable(ctx.Identifier().getText());
 
             if (variableWrapper == null) {
-                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
-                return null;
+                throw new GrammarException(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
             }
 
         } else {
@@ -465,8 +441,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         DataType startType = visit(ctx.factor(0));
 
         if (!startType.equals(DataType.INT)) {
-            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
         }
 
         INSTRUCTIONS.add(new Instruction(InstructionType.STO, variableWrapper.level, variableWrapper.variable.getStackPosition()));
@@ -478,8 +453,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         DataType endType = visit(ctx.factor(1));
 
         if (!endType.equals(DataType.INT)) {
-            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
         }
 
         INSTRUCTIONS.add(new Instruction(OperationType.LTE));
@@ -509,8 +483,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
         DataType conditional = visit(ctx.expression());
         if (conditional != DataType.BOOL) {
-            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
         }
 
         Instruction jmc = new Instruction(InstructionType.JMC, 0);
@@ -559,8 +532,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         DataType switchParam = visit(ctx.simpleExpression());
 
         if (!switchParam.equals(DataType.INT)) {
-            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
         }
 
         VariableWrapper tempVar = getVariable("#");
@@ -604,8 +576,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
 
         DataType conditional = visit(ctx.expression(0));
         if (conditional != DataType.BOOL) {
-            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
         }
 
         Instruction jmc = new Instruction(InstructionType.JMC, 0);
@@ -623,8 +594,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         jmp.setValue(INSTRUCTIONS.size());
 
         if (!trueExpression.equals(falseExpression)) {
-            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
         }
 
         return trueExpression;
@@ -679,8 +649,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         DataType right = visit(ctx.simpleExpression(1));
 
         if (!(left.equals(DataType.INT) || right.equals(DataType.INT))) {
-            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
         }
 
         switch (ctx.op.getType()) {
@@ -707,8 +676,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         DataType right = visit(ctx.simpleExpression(1));
 
         if (!(left.equals(DataType.INT) || right.equals(DataType.INT))) {
-            MESSAGES.add(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
-            return null;
+            throw new GrammarException(MessageUtil.create(MessageType.WRONG_TYPE, ctx));
         }
 
         switch (ctx.op.getType()) {
@@ -728,8 +696,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
         if (ctx.Identifier() != null) {
             VariableWrapper variableWrapper = getVariableConstant(ctx.Identifier().getText());
             if (variableWrapper == null) {
-                MESSAGES.add(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
-                return null;
+                throw new GrammarException(MessageUtil.create(MessageType.UNDEFINED_VARIABLE, ctx));
             }
             INSTRUCTIONS.add(new Instruction(InstructionType.LOD, variableWrapper.level, variableWrapper.variable.getStackPosition()));
             return variableWrapper.variable.getDataType();
@@ -746,7 +713,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             INSTRUCTIONS.add(new Instruction(InstructionType.LIT, ctx.Boolean().getText().equals("true") ? 1 : 0));
             return DataType.BOOL;
         }
-        return DataType.VOID; // nejnizsi uzel derivacniho stromu
+        return null; // nejnizsi uzel derivacniho stromu
     }
 
     private void addNegation() {

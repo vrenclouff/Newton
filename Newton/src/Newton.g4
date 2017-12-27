@@ -1,5 +1,4 @@
 grammar Newton;
-// chybi negace
 
 program
     : programHeading functionStatement* mainStatement;
