@@ -8,7 +8,7 @@ import java.text.MessageFormat;
 public class MessageUtil {
 
     public static String create(MessageType type, ParserRuleContext ctx) {
-        int line = ctx.getStart().getCharPositionInLine();
+        int line = ctx.getStart().getLine();
         return MessageFormat.format(type.getPattern(), line);
     }
 }

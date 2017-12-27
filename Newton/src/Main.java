@@ -28,7 +28,7 @@ public class Main {
            System.out.println(e.getMessage());
         } catch (GrammarException e) {
             System.out.println(e.getMessage());
-        }
+        } catch (NullPointerException e){}
     }
 
     private static void printInstructions(MainVisitor visitor) {
