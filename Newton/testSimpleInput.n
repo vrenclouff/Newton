@@ -3,5 +3,5 @@ variable:
     int a;
 
 main()
-    a = (c + 3) * 10;
+    a = (4 + 3) * 10;
 end
