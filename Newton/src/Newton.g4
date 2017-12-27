@@ -66,7 +66,7 @@ whileStatement // done
     : BeginWhile expression Do statement* EndWhile;
 
 forStatement
-    : BeginFor (Identifier Assign)? factor Colon factor (Colon Int)? Do statement* EndFor;   // for a = 1:10:2 (1 az 10 po 2)
+    : BeginFor Identifier Assign factor Colon factor (Colon Int)? Do statement* EndFor;   // for a = 1:10:2 (1 az 10 po 2)
 
 doWhileStatement // done
     : Do statement* BeginWhile expression;
