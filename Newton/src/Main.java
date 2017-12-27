@@ -1,3 +1,4 @@
+import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -17,6 +18,8 @@ public class Main {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
 
             NewtonParser parser = new NewtonParser(tokens);
+            parser.setErrorHandler(new BailErrorStrategy());
+
             ParserRuleContext ruleContext = parser.program();
 
             MainVisitor visitor = new MainVisitor();
@@ -28,7 +31,7 @@ public class Main {
            System.out.println(e.getMessage());
         } catch (GrammarException e) {
             System.out.println(e.getMessage());
-        } catch (NullPointerException e){}
+        }
     }
 
     private static void printInstructions(MainVisitor visitor) {
