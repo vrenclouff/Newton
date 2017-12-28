@@ -8,7 +8,7 @@
 \contentsline {chapter}{\numberline {4}Implementace}{4}
 \contentsline {section}{\numberline {4.1}Implementovan\IeC {\'a} roz\IeC {\v s}\IeC {\'\i }\IeC {\v r}en\IeC {\'a} funk\IeC {\v c}nost}{4}
 \contentsline {subsection}{\numberline {4.1.1}Jednoduch\IeC {\'a} roz\IeC {\v s}\IeC {\'\i }\IeC {\v r}en\IeC {\'\i }}{4}
-\contentsline {subsection}{\numberline {4.1.2}Slo\IeC {\v z}it\IeC {\v e}j\IeC {\v s}\IeC {\'\i } roz\IeC {\v s}\IeC {\'\i }\IeC {\v r}en\IeC {\'\i } roz\IeC {\v s}\IeC {\'\i }\IeC {\v r}en\IeC {\'\i }}{4}
+\contentsline {subsection}{\numberline {4.1.2}Slo\IeC {\v z}it\IeC {\v e}j\IeC {\v s}\IeC {\'\i } roz\IeC {\v s}\IeC {\'\i }\IeC {\v r}en\IeC {\'\i }}{4}
 \contentsline {section}{\numberline {4.2}Konstrukce programu}{5}
 \contentsline {subsection}{\numberline {4.2.1}for}{5}
 \contentsline {subsubsection}{gramatika}{5}

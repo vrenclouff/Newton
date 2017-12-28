@@ -1,7 +1,18 @@
 constant:
 variable:
-    int a;
+    bool a;
+    bool result;
+
+    fnc bool pocitej(int d)
+        switch d of
+            0: result = false;
+            5: result = true;
+            default: result = false;
+        endswitch
+
+        return result;
+    end
 
 main()
-    a = (4 + 3) * 10;
+    a = pocitej(5);
 end
