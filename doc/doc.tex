@@ -186,11 +186,9 @@ expression Ques expression Colon expression;
 
 \subsubsection{použití}
 \begin{lstlisting}
-switch param of
-    0: result = false;
-    1: result = true;
-    default: result = false;
-endswitch
+bool a;
+. . .
+a = b < 3 ? true : false;
 \end{lstlisting}
 
 \subsection{paralelní přiřazení}
