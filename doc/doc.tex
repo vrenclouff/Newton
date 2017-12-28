@@ -82,7 +82,129 @@ Abstraktní syntaktický strom, který generuje ANTLR je procházen pomocí náv
 
 \chapter{Implementace}
 
+\section{Implementovaná rozšířená funkčnost}
+\subsection{Jednoduchá rozšíření}
+\begin{itemize}
+\item cykly \\
+\begin{itemize}
+\item for \\
+\item while \\
+\item do while \\
+\item repeat until \\
+\end{itemize}
+\item datový typ boolean \\
+\item rozvětvená podmínka \verb|switch| \\
+\item násobné přiřazení \\
+\item ternární operátor \\
+\item paralelní přiřazení \\
+\end{itemize}
 
+\subsection{Složitější rozšíření rozšíření}
+\begin{itemize}
+\item parametry předávané hodnotou \\
+\item návratová hodnota podprogramu \\
+\end{itemize}
+
+\section{Konstrukce programu}
+\subsection{for}
+\subsubsection{gramatika}
+\begin{lstlisting}
+BeginFor Identifier Assign factor Colon factor (Colon Int)? 
+Do 
+	statement* 
+EndFor;
+\end{lstlisting}
+
+\subsubsection{použití}
+\begin{lstlisting}
+for a = 1 : 10 : 2 do
+	b = b + 1;
+endfor
+\end{lstlisting}
+
+\subsection{while}
+\subsubsection{gramatika}
+\begin{lstlisting}
+BeginWhile expression Do statement* EndWhile;
+\end{lstlisting}
+
+\subsubsection{použití}
+\begin{lstlisting}
+while a < 10 do
+	b = b + 1;
+endwhile
+\end{lstlisting}
+
+\subsection{do while}
+\subsubsection{gramatika}
+\begin{lstlisting}
+Do statement* BeginWhile expression;
+\end{lstlisting}
+
+\subsubsection{použití}
+\begin{lstlisting}
+do 
+	b = b + 1;
+while a > 1;
+\end{lstlisting}
+
+\subsection{repeat until}
+\subsubsection{gramatika}
+\begin{lstlisting}
+Repeat statement* Until expression;
+\end{lstlisting}
+
+\subsubsection{použití}
+\begin{lstlisting}
+repeat
+	b = b + 1;
+until a < 1;
+\end{lstlisting}
+
+\subsection{switch}
+\subsubsection{gramatika}
+\begin{lstlisting}
+BeginSwitch simpleExpression Of 
+	caseStatement+ 
+DefaultSwitch Colon statement EndSwitch;
+\end{lstlisting}
+
+\subsubsection{použití}
+\begin{lstlisting}
+switch param of
+    0: result = false;
+    1: result = true;
+    default: result = false;
+endswitch
+\end{lstlisting}
+
+\subsection{ternární operátor}
+\subsubsection{gramatika}
+\begin{lstlisting}
+expression Ques expression Colon expression;
+\end{lstlisting}
+
+\subsubsection{použití}
+\begin{lstlisting}
+switch param of
+    0: result = false;
+    1: result = true;
+    default: result = false;
+endswitch
+\end{lstlisting}
+
+\subsection{paralelní přiřazení}
+\subsubsection{gramatika}
+\begin{lstlisting}
+CurlyBracketLeft Identifier (',' Identifier)* CurlyBracketRight 
+Assign CurlyBracketLeft simpleFactor (',' simpleFactor)* 
+CurlyBracketRight Semi;
+\end{lstlisting}
+
+\subsubsection{použití}
+\begin{lstlisting}
+{a, b, c} = {1, 2, 5};
+\end{lstlisting}
 
 \section{Vzorové programy}
 \begin{lstlisting}[frame=single]  % Start your code-block
@@ -124,7 +246,6 @@ main()
     a = pocitej(5);
 end
 \end{lstlisting}
-
 \chapter{Závěr}
 
 \end{document}
