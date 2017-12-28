@@ -31,5 +31,7 @@
 \contentsline {subsection}{\numberline {4.2.7}paraleln\IeC {\'\i } p\IeC {\v r}i\IeC {\v r}azen\IeC {\'\i }}{7}
 \contentsline {subsubsection}{gramatika}{7}
 \contentsline {subsubsection}{pou\IeC {\v z}it\IeC {\'\i }}{7}
-\contentsline {section}{\numberline {4.3}Vzorov\IeC {\'e} programy}{7}
-\contentsline {chapter}{\numberline {5}Z\IeC {\'a}v\IeC {\v e}r}{9}
+\contentsline {section}{\numberline {4.3}Vzorov\IeC {\'e} programy}{8}
+\contentsline {subsubsection}{V\IeC {\'y}stup}{8}
+\contentsline {subsubsection}{V\IeC {\'y}stup}{10}
+\contentsline {chapter}{\numberline {5}Z\IeC {\'a}v\IeC {\v e}r}{12}
