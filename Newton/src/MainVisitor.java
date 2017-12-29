@@ -322,7 +322,7 @@ public class MainVisitor extends NewtonBaseVisitor<DataType> {
             }
         }
 
-        INSTRUCTIONS.add(new Instruction(InstructionType.CAL, function.getAddress()));
+        INSTRUCTIONS.add(new Instruction(InstructionType.CAL, level, function.getAddress()));
 
         if (paramsCount != 0) {
             INSTRUCTIONS.add(new Instruction(InstructionType.INT, -paramsCount));

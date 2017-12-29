@@ -1,18 +1,15 @@
 constant:
 variable:
-    bool a;
-    bool result;
+    int a;
 
-    fnc bool pocitej(int d)
-        switch d of
-            0: result = false;
-            5: result = true;
-            default: result = false;
-        endswitch
-
-        return result;
-    end
+fnc void pocitej()
+    a = a + 2;
+    if a <= 6 then
+        pocitej();
+    endif
+end
 
 main()
-    a = pocitej(5);
+    a = 1;
+    pocitej();
 end
