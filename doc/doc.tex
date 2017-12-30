@@ -69,16 +69,44 @@ Mezi základní podmínky, které jazyk musí splňovat, jsou následující kon
 \end{itemize}
 
 \chapter{Popis řešení}
-Program je implementován v programovacím jazyce Java. Pro vytvoření lexikálního analyzátoru a parseru je použita knihovna ANTLR.
+Výstup programu bude posloupnost instrukcí vstupního programu. Instrukce jsou generované pro architekturu jazyka PL/0. 
 
-\section{ANTLR}
-Obecný postup při vytváření překladače pomocí ANTLR
-Nejdříve je potřeba vytvořit gramatiku, která bude popisovat zvolený programovací jazyk. Obsahuje tedy lexikální a parsovací pravidla. Z nich ANTLR vytvoří lexikální analyzátor, který čte vstupní text a rozdělí ho na jednotlivé části (tokeny). Dále jsou tyto tokeny předány parseru, který vytváří abstraktní syntaktický strom a interpretuje kód.
+Seznam všech instrukcí je následující:
 
-\section{Gramatika}
+\begin{itemize}
+\item LIT --  0,A    ulož konstantu A do zásobníku \\
+\item OPR -- 0,A    proveď instrukci A \\
+\begin{itemize}
+\item 1    unární minus \\
+\item 2    + \\
+\item 3    - \\
+\item 4    * \\
+\item 5    div - celočíselné dělení (znak /) \\
+\item 6    mod - dělení modulo (znak %) \\
+\item 7    odd - test, zda je číslo liché \\
+\item 8    test rovnosti (znak =) \\
+\item 9    test nerovnosti (znaky <>) \\
+\item 10    < \\
+\item 11    >= \\
+\item 12    > \\
+\item 13    <= \\
+\end{itemize}
 
-\section{Visitor}
-Abstraktní syntaktický strom, který generuje ANTLR je procházen pomocí návrhového vzoru Visitor, kdy jednotlivé uzly stromu jsou postupně navštěvovány zleva doprava.
+\item LOD L,A --    ulož hodnotu proměnné z adr. L,A na vrchol zásobníku \\
+\item STO L,A --    zapiš do proměnné z adr. L,A hodnotu z vrcholu zásobníku \\
+\item CAL L,A  --  volej proceduru A z úrovně L \\
+\item INT 0,A   -- zvyš obsah top-registru zásobníku o hodnotu A \\
+\item JMP 0,A   -- proveď skok na adresu A \\
+\item JMC 0,A   -- proveď skok na adresu A, je-li hodnota na vrcholu zásobníku 0 \\
+\item RET 0,0  --  návrat z procedury (return) \\
+
+\end{itemize}
+
+\section{Vytvoření AST (abstract syntax tree)}
+Program je implementován v programovacím jazyce Java. Pro vytvoření lexikálního analyzátoru a parseru je použita knihovna ANTLR. Obecný postup při vytváření překladače pomocí ANTLR obsahuje vytvoření gramatiky, která bude popisovat zvolený programovací jazyk. Obsahuje tedy lexikální a parsovací pravidla. Z nich ANTLR vytvoří lexikální analyzátor, který čte vstupní text a rozdělí ho na jednotlivé části (tokeny). Dále jsou tyto tokeny předány parseru, který vytváří abstraktní syntaktický strom a interpretuje kód.
+
+\section{Procházení stromu}
+Abstraktní syntaktický strom, který generuje ANTLR je procházen pomocí návrhového vzoru visitor, kdy jsou postupně navštěvovány jednotlivé uzly stromu. Pro každý uzel (pravidlo) je vytvořena metoda, která vykoná potřebný kód pro dané pravidlo a vygeneruje instrukce.
 
 \chapter{Implementace}
 
