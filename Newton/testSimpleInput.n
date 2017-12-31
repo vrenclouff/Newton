@@ -1,15 +1,11 @@
 constant:
 variable:
-    int a;
+    bool a;
 
-fnc void pocitej()
-    a = a + 2;
-    if a <= 6 then
-        pocitej();
-    endif
+fnc bool pocitej(int tmp)
+    return tmp < 8 ? true : false;
 end
 
 main()
-    a = 1;
-    pocitej();
+    a = pocitej(10);
 end

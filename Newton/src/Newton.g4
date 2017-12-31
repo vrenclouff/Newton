@@ -47,7 +47,7 @@ multipleAssignmentStatement // done
     : Identifier Assign;
 
 parallelAssignmentStatement // done
-    : CurlyBracketLeft Identifier (',' Identifier)* CurlyBracketRight Assign CurlyBracketLeft simpleFactor (',' simpleFactor)* CurlyBracketRight Semi;
+    : CurlyBracketLeft Identifier (Comma Identifier)* CurlyBracketRight Assign CurlyBracketLeft simpleFactor (Comma simpleFactor)* CurlyBracketRight Semi;
 
 callFunctionStatement // done
     : (Identifier Assign)? Identifier RoundBracketLeft parameterList? RoundBracketRight Semi;

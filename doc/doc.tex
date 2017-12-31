@@ -1,5 +1,5 @@
 \documentclass{style}
-\usepackage[utf8]{inputenc} 
+\usepackage[utf8]{inputenc}
 \usepackage[czech]{babel}
 \usepackage{ae}
 \usepackage{url}
@@ -46,7 +46,7 @@
 \begin{tabular}{c|c|c}
 Jméno & Studijní číslo & Email \\
 \hline
-Lukáš Černý & xxxx & xxxx \\
+Lukáš Černý & A17N0065P & luccerny@students.zcu.cz \\
 Štěpán Baratta & A17N0061P & BarattaStepan@gmail.com \\
 \end{tabular}
 \end{table}
@@ -69,7 +69,7 @@ Mezi základní podmínky, které jazyk musí splňovat, jsou následující kon
 \end{itemize}
 
 \chapter{Popis řešení}
-Výstup programu bude posloupnost instrukcí vstupního programu. Instrukce jsou generované pro architekturu jazyka PL/0. 
+Výstup programu bude posloupnost instrukcí vstupního programu. Instrukce jsou generované pro architekturu jazyka PL/0.
 
 Seznam všech instrukcí je následující:
 
@@ -137,9 +137,9 @@ Abstraktní syntaktický strom, který generuje ANTLR je procházen pomocí náv
 \subsection{for}
 \subsubsection{gramatika}
 \begin{lstlisting}
-BeginFor Identifier Assign factor Colon factor (Colon Int)? 
-Do 
-	statement* 
+BeginFor Identifier Assign factor Colon factor (Colon Int)?
+Do
+	statement*
 EndFor;
 \end{lstlisting}
 
@@ -171,7 +171,7 @@ Do statement* BeginWhile expression;
 
 \subsubsection{použití}
 \begin{lstlisting}
-do 
+do
 	b = b + 1;
 while a > 1;
 \end{lstlisting}
@@ -192,8 +192,8 @@ until a < 1;
 \subsection{switch}
 \subsubsection{gramatika}
 \begin{lstlisting}
-BeginSwitch simpleExpression Of 
-	caseStatement+ 
+BeginSwitch simpleExpression Of
+	caseStatement+
 DefaultSwitch Colon statement EndSwitch;
 \end{lstlisting}
 
@@ -222,8 +222,8 @@ a = b < 3 ? true : false;
 \subsection{paralelní přiřazení}
 \subsubsection{gramatika}
 \begin{lstlisting}
-CurlyBracketLeft Identifier (',' Identifier)* CurlyBracketRight 
-Assign CurlyBracketLeft simpleFactor (',' simpleFactor)* 
+CurlyBracketLeft Identifier (',' Identifier)* CurlyBracketRight
+Assign CurlyBracketLeft simpleFactor (',' simpleFactor)*
 CurlyBracketRight Semi;
 \end{lstlisting}
 
